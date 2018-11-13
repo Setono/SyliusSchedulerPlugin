@@ -15,7 +15,8 @@ final class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('setono_sylius_schedule_plugin');
+
+        $rootNode = $treeBuilder->root('setono_sylius_scheduler');
 
         return $treeBuilder;
     }
