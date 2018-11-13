@@ -27,6 +27,21 @@ Send follow up emails to your customers to entice them to leave feedback for you
     ];
     ```
 
+## Plugin configuration
+
+```yaml
+setono_sylius_scheduler:
+    driver: doctrine/orm
+
+    # Wipe logs in X days after command execution
+    # Specify 0 to never wipe logs
+    wipe_logs_in: 0
+
+    # We can specify emails to receive error reports on every Job
+    # But here we can specify emails which receive error reports for all Jobs
+    error_report_emails: []
+```
+
 # Contribution
 
 ## Installation
