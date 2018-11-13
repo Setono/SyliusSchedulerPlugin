@@ -8,6 +8,7 @@ use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Webmozart\Assert\Assert;
 
 final class Configuration implements ConfigurationInterface
 {
@@ -30,7 +31,24 @@ final class Configuration implements ConfigurationInterface
 
         // We can specify emails to receive error reports on every Job
         // But here we can specify emails which receive error reports for all Jobs
-        $rootNodeChildren->scalarNode('error_reports_emails')->defaultValue(0);
+        $rootNodeChildren->arrayNode('error_report_emails')
+            ->treatNullLike([])
+            ->beforeNormalization()->castToArray()->end()
+            ->beforeNormalization()
+                ->always(function (array $emails) {
+                    foreach ($emails as $email) {
+                        Assert::true((bool) filter_var($email, FILTER_VALIDATE_EMAIL), sprintf(
+                            "You should provide valid email. '%s' not looks like valid email.",
+                            $email
+                        ));
+                    }
+
+                    return $emails;
+                })
+            ->end()
+            ->scalarPrototype()
+            ->cannotBeEmpty()
+        ;
 
         return $treeBuilder;
     }
