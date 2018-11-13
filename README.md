@@ -34,9 +34,9 @@ Send follow up emails to your customers to entice them to leave feedback for you
 To automatically execute installation steps, load fixtures 
 and run server with just one command, run:
 
-    ```bash
-    composer try
-    ```
+```bash
+composer try
+```
 
 or follow next steps manually:
 
