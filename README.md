@@ -1,86 +1,93 @@
-<p align="center">
-    <a href="https://sylius.com" target="_blank">
-        <img src="https://demo.sylius.com/assets/shop/img/logo.png" />
-    </a>
-</p>
+# SetonoSyliusSchedulerPlugin
 
-<h1 align="center">Plugin Skeleton</h1>
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE)
+[![Build Status][ico-travis]][link-travis]
+[![Quality Score][ico-code-quality]][link-code-quality]
 
-<p align="center">Skeleton for starting Sylius plugins.</p>
+Send follow up emails to your customers to entice them to leave feedback for you. The plugin uses Schedulers [AFS service](https://support.scheduler.com/hc/en-us/articles/213703667-Automatic-Feedback-Service-AFS-2-0-setup-guide).
 
 ## Installation
 
-1. Run `composer create-project sylius/plugin-skeleton ProjectName`.
-
-2. From the plugin skeleton root directory, run the following commands:
+* Install plugin using `composer`:
 
     ```bash
-    $ (cd tests/Application && yarn install)
-    $ (cd tests/Application && yarn build)
-    $ (cd tests/Application && bin/console assets:install public -e test)
+    $ composer require setono/sylius-scheduler-plugin
+    ```
+
+* Add bundle to `config/bundles.php`:
+
+    ```php
+    <?php
+    // config/bundles.php
     
-    $ (cd tests/Application && bin/console doctrine:database:create -e test)
-    $ (cd tests/Application && bin/console doctrine:schema:create -e test)
+    return [
+        // ...
+        Setono\SyliusSchedulerPlugin\SetonoSyliusSchedulerPlugin::class => ['all' => true],
+    ];
     ```
 
-## Usage
+# Contribution
 
-### Running plugin tests
+## Installation
 
-  - PHPUnit
+To automatically execute installation steps, load fixtures 
+and run server with just one command, run:
 
     ```bash
-    $ vendor/bin/phpunit
+    composer try
     ```
+
+or follow next steps manually:
+
+* Initialize:
+
+    ```bash
+    SYMFONY_ENV=test
+    (cd tests/Application && yarn install) && \
+        (cd tests/Application && yarn build) && \
+        (cd tests/Application && bin/console assets:install public -e $SYMFONY_ENV) && \
+        (cd tests/Application && bin/console doctrine:database:create -e $SYMFONY_ENV) && \
+        (cd tests/Application && bin/console doctrine:schema:create -e $SYMFONY_ENV)
+    ```
+
+* If you want to manually play with plugin test app, run:
+
+    ```bash
+    SYMFONY_ENV=test
+    (cd tests/Application && bin/console sylius:fixtures:load --no-interaction -e $SYMFONY_ENV && \
+        (cd tests/Application && bin/console server:run -d public -e $SYMFONY_ENV)
+    ```
+
+## Running plugin tests
 
   - PHPSpec
 
     ```bash
-    $ vendor/bin/phpspec run
+    $ composer phpspec
     ```
 
-  - Behat (non-JS scenarios)
+  - Behat
 
     ```bash
-    $ vendor/bin/behat --tags="~@javascript"
+    $ composer behat
     ```
 
-  - Behat (JS scenarios)
+  - All tests (phpspec & behat)
  
-    1. Download [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/)
-    
-    2. Download [Selenium Standalone Server](https://www.seleniumhq.org/download/).
-    
-    2. Run Selenium server with previously downloaded Chromedriver:
-    
-        ```bash
-        $ java -Dwebdriver.chrome.driver=chromedriver -jar selenium-server-standalone.jar
-        ```
-        
-    3. Run test application's webserver on `localhost:8080`:
-    
-        ```bash
-        $ (cd tests/Application && bin/console server:run localhost:8080 -d public -e test)
-        ```
-    
-    4. Run Behat:
-    
-        ```bash
-        $ vendor/bin/behat --tags="@javascript"
-        ```
-
-### Opening Sylius with your plugin
-
-- Using `test` environment:
-
     ```bash
-    $ (cd tests/Application && bin/console sylius:fixtures:load -e test)
-    $ (cd tests/Application && bin/console server:run -d public -e test)
+    $ composer test
     ```
     
-- Using `dev` environment:
+## Pushing changes & making PRs
 
-    ```bash
-    $ (cd tests/Application && bin/console sylius:fixtures:load -e dev)
-    $ (cd tests/Application && bin/console server:run -d public -e dev)
-    ```
+Please run `composer all` to run all checks and tests before making PR or pushing changes to repo.
+
+[ico-version]: https://img.shields.io/packagist/v/setono/sylius-scheduler-plugin.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/Setono/SyliusSchedulerPlugin/master.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/Setono/SyliusSchedulerPlugin.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/setono/sylius-scheduler-plugin
+[link-travis]: https://travis-ci.org/Setono/SyliusSchedulerPlugin
+[link-code-quality]: https://scrutinizer-ci.com/g/Setono/SyliusSchedulerPlugin
