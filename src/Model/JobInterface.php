@@ -260,6 +260,11 @@ interface JobInterface extends ResourceInterface
     public function isRetried(): bool;
 
     /**
+     * @param \DateTime|null $checkedAt
+     */
+    public function setCheckedAt(?\DateTime $checkedAt): void;
+
+    /**
      * @return \DateTime|null
      */
     public function getCheckedAt(): ?\DateTime;

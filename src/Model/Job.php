@@ -578,9 +578,9 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function checked(): bool
+    public function setCheckedAt(?\DateTime $checkedAt): void
     {
-        $this->checkedAt = new \DateTime();
+        $this->checkedAt = $checkedAt;
     }
 
     /**
