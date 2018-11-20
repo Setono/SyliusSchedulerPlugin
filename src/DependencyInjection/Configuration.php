@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Setono\SyliusSchedulerPlugin\DependencyInjection;
 
+use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Model\Job;
+use Setono\SyliusSchedulerPlugin\Model\JobInterface;
+use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
+use Sylius\Component\Resource\Factory\Factory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -50,6 +55,67 @@ final class Configuration implements ConfigurationInterface
             ->cannotBeEmpty()
         ;
 
+        $defaultOptionsNode = $rootNode
+            ->children()
+            ->arrayNode('queue_options_defaults')
+                ->addDefaultsIfNotSet()
+            ;
+        $this->addQueueOptions($defaultOptionsNode);
+
+        $queueOptionsNode = $rootNode
+            ->children()
+            ->arrayNode('queue_options')
+                ->useAttributeAsKey('queue')
+                ->prototype('array')
+            ;
+        $this->addQueueOptions($queueOptionsNode);
+
+        $this->addResourcesSection($rootNode);
+
         return $treeBuilder;
     }
+
+    /**
+     * @param ArrayNodeDefinition $node
+     */
+    private function addResourcesSection(ArrayNodeDefinition $node): void
+    {
+        $node
+            ->children()
+                ->arrayNode('resources')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('job')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('options')->end()
+                                ->arrayNode('classes')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->scalarNode('model')->defaultValue(Job::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('interface')->defaultValue(JobInterface::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('repository')->defaultValue(JobRepository::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('factory')->defaultValue(Factory::class)->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $def
+     */
+    private function addQueueOptions(ArrayNodeDefinition $nodeDefinition)
+    {
+        $nodeDefinition
+            ->children()
+            ->scalarNode('max_concurrent_jobs')->end()
+        ;
+    }
 }
+

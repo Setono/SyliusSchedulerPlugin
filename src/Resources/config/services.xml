@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <imports>
+        <import resource="services/commands.xml"/>
+    </imports>
+
     <services>
-        <!-- Put your services here -->
+        <defaults public="true" />
+
+        <service id="setono_sylius_scheduler.retry_scheduler"
+                 class="Setono\SyliusSchedulerPlugin\Retry\ExponentialRetryScheduler" />
+
+        <service id="setono_sylius_scheduler.job_manager"
+                 class="Setono\SyliusSchedulerPlugin\JobManager\JobManager">
+            <argument type="service" id="setono_sylius_scheduler.repository.job" />
+            <argument type="service" id="setono_sylius_scheduler.manager.job" />
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="setono_sylius_scheduler.retry_scheduler" />
+        </service>
     </services>
 </container>

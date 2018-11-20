@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+>
+
+    <mapped-superclass name="Setono\SyliusSchedulerPlugin\Model\Job" table="setono_sylius_scheduler_job">
+        <indexes>
+            <index name="cmd_search_index" columns="command" />
+            <index name="sorting_index" columns="state,priority,id" />
+        </indexes>
+
+        <id name="id" type="bigint">
+            <generator strategy="AUTO" />
+            <options>
+                <option name="unsigned">1</option>
+            </options>
+        </id>
+
+        <field name="state" type="string" length="15" />
+        <field name="queue" type="string" length="50" />
+        <field name="priority" type="smallint" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="startedAt" column="started_at" type="datetime" nullable="true" />
+        <field name="checkedAt" column="checked_at" type="datetime" nullable="true" />
+        <field name="workerName" column="worker_name" type="string" length="50" nullable="true" />
+        <field name="executeAfter" column="execute_after" type="datetime" nullable="true" />
+        <field name="closedAt" column="closed_at" type="datetime" nullable="true" />
+        <field name="command" type="string" />
+        <field name="args" type="json_array" />
+        <field name="output" type="string" nullable="true" />
+        <field name="errorOutput" column="error_output" type="string" nullable="true" />
+
+        <field name="exitCode" column="exit_code" type="smallint" nullable="true">
+            <options>
+                <option name="unsigned">1</option>
+            </options>
+        </field>
+
+        <field name="maxRuntime" column="max_runtime" type="smallint">
+            <options>
+                <option name="default">0</option>
+                <option name="unsigned">1</option>
+            </options>
+        </field>
+
+        <field name="maxRetries" column="max_retries" type="smallint">
+            <options>
+                <option name="default">0</option>
+                <option name="unsigned">1</option>
+            </options>
+        </field>
+
+        <many-to-one field="originalJob" target-entity="Setono\SyliusSchedulerPlugin\Model\JobInterface" inversed-by="retryJobs">
+            <join-column name="original_job_id" referenced-column-name="id" />
+        </many-to-one>
+
+        <one-to-many field="retryJobs" target-entity="Setono\SyliusSchedulerPlugin\Model\JobInterface" mapped-by="originalJob" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+                <cascade-detach/>
+                <cascade-refresh/>
+            </cascade>
+            <order-by>
+                <order-by-field name="startedAt" direction="DESC" />
+            </order-by>
+        </one-to-many>
+
+        <many-to-many target-entity="Setono\SyliusSchedulerPlugin\Model\JobInterface" field="dependencies" fetch="EAGER">
+            <join-table name="setono_sylius_scheduler_job_dependencies">
+                <join-columns>
+                    <join-column name="source_job_id" referenced-column-name="id" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="destination_job_id" referenced-column-name="id" unique="false" nullable="false" on-delete="CASCADE" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+    </mapped-superclass>
+
+</doctrine-mapping>
