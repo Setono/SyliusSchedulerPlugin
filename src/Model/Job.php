@@ -198,6 +198,14 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority * -1;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPriority(): int
     {
         return $this->priority * -1;
@@ -594,7 +602,15 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function getQueue(): string
+    public function setQueue(?string $queue): void
+    {
+        $this->queue = $queue;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueue(): ?string
     {
         return $this->queue;
     }

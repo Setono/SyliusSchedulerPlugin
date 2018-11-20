@@ -84,6 +84,11 @@ interface JobInterface extends ResourceInterface
     public function getWorkerName(): ?string;
 
     /**
+     * @param int $priority
+     */
+    public function setPriority(int $priority): void;
+
+    /**
      * @return int
      */
     public function getPriority(): int;
@@ -270,9 +275,14 @@ interface JobInterface extends ResourceInterface
     public function getCheckedAt(): ?\DateTime;
 
     /**
-     * @return string
+     * @param null|string $queue
      */
-    public function getQueue(): string;
+    public function setQueue(?string $queue): void;
+
+    /**
+     * @return null|string
+     */
+    public function getQueue(): ?string;
 
     /**
      * @return bool

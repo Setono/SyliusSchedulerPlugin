@@ -4,6 +4,7 @@ namespace Setono\SyliusSchedulerPlugin\JobManager;
 
 use Doctrine\ORM\EntityManager;
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Factory\JobFactory;
 use Setono\SyliusSchedulerPlugin\Model\Job;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\Event\StateChangeEvent;
@@ -17,6 +18,11 @@ class JobManager
      * @var JobRepository
      */
     private $jobRepository;
+
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
 
     /**
      * @var EntityManager
@@ -35,17 +41,20 @@ class JobManager
 
     /**
      * @param JobRepository $jobRepository
+     * @param JobFactory $jobFactory
      * @param EntityManager $entityManager
      * @param EventDispatcherInterface $eventDispatcher
      * @param RetrySchedulerInterface $retryScheduler
      */
     public function __construct(
         JobRepository $jobRepository,
+        JobFactory $jobFactory,
         EntityManager $entityManager,
         EventDispatcherInterface $eventDispatcher,
         RetrySchedulerInterface $retryScheduler
     ) {
         $this->jobRepository = $jobRepository;
+        $this->jobFactory = $jobFactory;
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->retryScheduler = $retryScheduler;
@@ -78,7 +87,7 @@ class JobManager
             return $job;
         }
 
-        $job = new Job($command, $args, false); // @todo Factory
+        $job = $this->jobFactory->createForCommand($command, $args);
         $this->jobRepository->add($job);
 
         $firstJob = $this->jobRepository->findFirstOneByCommand($command, $args);
@@ -176,7 +185,13 @@ class JobManager
 
                 // The original job has failed, and we are allowed to retry it.
                 if ($job->isRetryAllowed()) {
-                    $retryJob = new Job($job->getCommand(), $job->getArgs(), true, $job->getQueue(), $job->getPriority());
+                    $retryJob = $this->jobFactory->createForCommand(
+                        $job->getCommand(),
+                        $job->getArgs()
+                    );
+                    $retryJob->setState(JobInterface::STATE_PENDING);
+                    $retryJob->setQueue($job->getQueue());
+                    $retryJob->setPriority($job->getPriority());
                     $retryJob->setMaxRuntime($job->getMaxRuntime());
                     $retryJob->setExecuteAfter(
                         $this->retryScheduler->scheduleNextRetry($job)

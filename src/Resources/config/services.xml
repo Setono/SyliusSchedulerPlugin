@@ -6,6 +6,7 @@
 
     <imports>
         <import resource="services/commands.xml"/>
+        <import resource="services/factories.xml"/>
     </imports>
 
     <services>
@@ -17,9 +18,11 @@
         <service id="setono_sylius_scheduler.job_manager"
                  class="Setono\SyliusSchedulerPlugin\JobManager\JobManager">
             <argument type="service" id="setono_sylius_scheduler.repository.job" />
+            <argument type="service" id="setono_sylius_scheduler.custom_factory.job" />
             <argument type="service" id="setono_sylius_scheduler.manager.job" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="setono_sylius_scheduler.retry_scheduler" />
         </service>
+
     </services>
 </container>
