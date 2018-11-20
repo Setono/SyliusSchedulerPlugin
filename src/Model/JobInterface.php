@@ -11,7 +11,7 @@ use Sylius\Component\Resource\Model\ResourceInterface;
 interface JobInterface extends ResourceInterface
 {
     /** State if job is inserted, but not yet ready to be started. */
-    const STATE_NEW = 'new';
+    public const STATE_NEW = 'new';
 
     /**
      * State if job is inserted, and might be started.
@@ -23,22 +23,32 @@ interface JobInterface extends ResourceInterface
      * In contrast to NEW, jobs of this state at least might be started,
      * while jobs of state NEW never are allowed to be started.
      */
-    const STATE_PENDING = 'pending';
+    public const STATE_PENDING = 'pending';
 
-    /** State if job was never started, and will never be started. */
-    const STATE_CANCELED = 'canceled';
+    /**
+     * State if job was never started, and will never be started.
+     */
+    public const STATE_CANCELED = 'canceled';
 
-    /** State if job was started and has not exited, yet. */
-    const STATE_RUNNING = 'running';
+    /**
+     * State if job was started and has not exited, yet.
+     */
+    public const STATE_RUNNING = 'running';
 
-    /** State if job exists with a successful exit code. */
-    const STATE_FINISHED = 'finished';
+    /**
+     * State if job exists with a successful exit code.
+     */
+    public const STATE_FINISHED = 'finished';
 
-    /** State if job exits with a non-successful exit code. */
-    const STATE_FAILED = 'failed';
+    /**
+     * State if job exits with a non-successful exit code.
+     */
+    public const STATE_FAILED = 'failed';
 
-    /** State if job exceeds its configured maximum runtime. */
-    const STATE_TERMINATED = 'terminated';
+    /**
+     * State if job exceeds its configured maximum runtime.
+     */
+    public const STATE_TERMINATED = 'terminated';
 
     /**
      * State if an error occurs in the runner command.
@@ -47,7 +57,7 @@ interface JobInterface extends ResourceInterface
      * jobs. If instead an error occurs in the job command, this will result
      * in a state of FAILED.
      */
-    const STATE_INCOMPLETE = 'incomplete';
+    public const STATE_INCOMPLETE = 'incomplete';
 
     /**
      * State if an error occurs in the runner command.
@@ -56,12 +66,17 @@ interface JobInterface extends ResourceInterface
      * jobs. If instead an error occurs in the job command, this will result
      * in a state of FAILED.
      */
-    const DEFAULT_QUEUE = 'default';
-    const MAX_QUEUE_LENGTH = 50;
+    public const DEFAULT_QUEUE = 'default';
+    public const MAX_QUEUE_LENGTH = 50;
 
-    const PRIORITY_LOW = -5;
-    const PRIORITY_DEFAULT = 0;
-    const PRIORITY_HIGH = 5;
+    public const PRIORITY_LOW = -5;
+    public const PRIORITY_DEFAULT = 0;
+    public const PRIORITY_HIGH = 5;
+
+    /**
+     * @return string
+     */
+    public function __toString();
 
     /**
      * @return string
@@ -74,12 +89,12 @@ interface JobInterface extends ResourceInterface
     public function setState(string $newState): void;
 
     /**
-     * @param null|string $workerName
+     * @param string|null $workerName
      */
     public function setWorkerName(?string $workerName): void;
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getWorkerName(): ?string;
 
@@ -149,20 +164,21 @@ interface JobInterface extends ResourceInterface
     public function isClosedNonSuccessful(): bool;
 
     /**
-     * @return Collection
+     * @return Collection|JobInterface[]
      */
     public function getDependencies(): Collection;
 
     /**
-     * @param JobInterface $job
+     * @param self $job
+     *
      * @return bool
      */
-    public function hasDependency(JobInterface $job): bool;
+    public function hasDependency(self $job): bool;
 
     /**
-     * @param JobInterface $job
+     * @param self $job
      */
-    public function addDependency(JobInterface $job): void;
+    public function addDependency(self $job): void;
 
     /**
      * @param string $output
@@ -175,22 +191,22 @@ interface JobInterface extends ResourceInterface
     public function addErrorOutput(string $output): void;
 
     /**
-     * @param null|string $output
+     * @param string|null $output
      */
     public function setOutput(?string $output): void;
 
     /**
-     * @param null|string $output
+     * @param string|null $output
      */
     public function setErrorOutput(?string $output): void;
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getOutput(): ?string;
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getErrorOutput(): ?string;
 
@@ -225,7 +241,7 @@ interface JobInterface extends ResourceInterface
     public function getMaxRetries(): int;
 
     /**
-     * @param int $tries
+     * @param int $maxRetries
      */
     public function setMaxRetries(int $maxRetries): void;
 
@@ -237,20 +253,20 @@ interface JobInterface extends ResourceInterface
     /**
      * @return JobInterface
      */
-    public function getOriginalJob(): JobInterface;
+    public function getOriginalJob(): self;
 
     /**
-     * @param JobInterface $job
+     * @param self $job
      */
-    public function setOriginalJob(JobInterface $job): void;
+    public function setOriginalJob(self $job): void;
 
     /**
-     * @param JobInterface $job
+     * @param self $job
      */
-    public function addRetryJob(JobInterface $job): void;
+    public function addRetryJob(self $job): void;
 
     /**
-     * @return ArrayCollection|JobInterface[]
+     * @return ArrayCollection|self[]
      */
     public function getRetryJobs(): Collection;
 
@@ -275,14 +291,14 @@ interface JobInterface extends ResourceInterface
     public function getCheckedAt(): ?\DateTime;
 
     /**
-     * @param null|string $queue
+     * @param string $queue
      */
-    public function setQueue(?string $queue): void;
+    public function setQueue(string $queue): void;
 
     /**
-     * @return null|string
+     * @return string
      */
-    public function getQueue(): ?string;
+    public function getQueue(): string;
 
     /**
      * @return bool

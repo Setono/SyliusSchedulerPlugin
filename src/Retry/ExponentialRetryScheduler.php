@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Retry;
 
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
@@ -21,6 +23,7 @@ class ExponentialRetryScheduler implements RetrySchedulerInterface
 
     /**
      * @param JobInterface $originalJob
+     *
      * @return \DateTime
      */
     public function scheduleNextRetry(JobInterface $originalJob): \DateTime

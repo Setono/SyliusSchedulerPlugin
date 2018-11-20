@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -8,9 +10,9 @@ use Setono\SyliusSchedulerPlugin\Event\NewOutputEvent;
 use Setono\SyliusSchedulerPlugin\Event\StateChangeEvent;
 use Setono\SyliusSchedulerPlugin\Exception\InvalidArgumentException;
 use Setono\SyliusSchedulerPlugin\JobManager\JobManager;
-use Setono\SyliusSchedulerPlugin\Model\Job;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\SetonoSyliusSchedulerPluginEvent;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand
+class RunCommand extends ContainerAwareCommand
 {
     protected static $defaultName = 'setono:scheduler:run';
 
@@ -33,7 +35,7 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     private $eventDispatcher;
 
     /**
-     * @var JobRepository
+     * @var JobManager
      */
     private $jobManager;
 
@@ -48,7 +50,7 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     private $env;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $verbose;
 
@@ -60,7 +62,7 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     /**
      * @var array
      */
-    private $runningJobs = array();
+    private $runningJobs = [];
 
     /**
      * @var bool
@@ -78,8 +80,7 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
         JobRepository $jobRepository,
         EntityManager $entityManager,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->jobManager = $jobManager;
         $this->jobRepository = $jobRepository;
         $this->entityManager = $entityManager;
@@ -88,26 +89,31 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
         parent::__construct();
     }
 
+    /**
+     * @noinspection ReturnTypeCanBeDeclaredInspection
+     */
     protected function configure()
     {
         $this
             ->setDescription('Runs jobs from the queue.')
-            ->addOption('max-runtime', 'r', InputOption::VALUE_REQUIRED, 'The maximum runtime in seconds.', 900)
-            ->addOption('max-concurrent-jobs', 'j', InputOption::VALUE_REQUIRED, 'The maximum number of concurrent jobs.', 4)
-            ->addOption('idle-time', null, InputOption::VALUE_REQUIRED, 'Time to sleep when the queue ran out of jobs.', 2)
-            ->addOption('queue', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Restrict to one or more queues.', array())
+            ->addOption('max-runtime', 'r', InputOption::VALUE_REQUIRED, 'The maximum runtime in seconds.', '900')
+            ->addOption('max-concurrent-jobs', 'j', InputOption::VALUE_REQUIRED, 'The maximum number of concurrent jobs.', '4')
+            ->addOption('idle-time', null, InputOption::VALUE_REQUIRED, 'Time to sleep when the queue ran out of jobs.', '2')
+            ->addOption('queue', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Restrict to one or more queues.', [])
             ->addOption('worker-name', null, InputOption::VALUE_REQUIRED, 'The name that uniquely identifies this worker process.')
         ;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @noinspection ReturnTypeCanBeDeclaredInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $startTime = time();
 
-        $maxRuntime = (integer) $input->getOption('max-runtime');
+        $maxRuntime = (int) $input->getOption('max-runtime');
         if ($maxRuntime <= 0) {
             throw new InvalidArgumentException('The maximum runtime must be greater than zero.');
         }
@@ -116,33 +122,32 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
             $maxRuntime += random_int(-120, 120);
         }
 
-        $maxJobs = (integer) $input->getOption('max-concurrent-jobs');
+        $maxJobs = (int) $input->getOption('max-concurrent-jobs');
         if ($maxJobs <= 0) {
             throw new InvalidArgumentException('The maximum number of jobs per queue must be greater than zero.');
         }
 
-        $idleTime = (integer) $input->getOption('idle-time');
+        $idleTime = (int) $input->getOption('idle-time');
         if ($idleTime <= 0) {
             throw new InvalidArgumentException('Time to sleep when idling must be greater than zero.');
         }
 
         $restrictedQueues = $input->getOption('queue');
 
+        /** @var string|null $workerName */
         $workerName = $input->getOption('worker-name');
         if ($workerName === null) {
-            $workerName = gethostname().'-'.getmypid();
-        }
-
-        if (strlen($workerName) > 50) {
+            $workerName = gethostname() . '-' . getmypid();
+        } elseif (\strlen($workerName) > 50) {
             throw new \RuntimeException(sprintf(
                 '"worker-name" must not be longer than 50 chars, but got "%s" (%d chars).',
                 $workerName,
-                strlen($workerName)
+                \strlen($workerName)
             ));
         }
 
-        $this->env = $input->getOption('env');
-        $this->verbose = $input->getOption('verbose');
+        $this->env = (string) $input->getOption('env');
+        $this->verbose = (string) $input->getOption('verbose');
         $this->output = $output;
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
@@ -165,19 +170,18 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     }
 
     /**
-     * @param $workerName
-     * @param $startTime
-     * @param $maxRuntime
-     * @param $idleTime
-     * @param $maxJobs
+     * @param string|null $workerName
+     * @param int $startTime
+     * @param int $maxRuntime
+     * @param int $idleTime
+     * @param int $maxJobs
      * @param array $restrictedQueues
      * @param array $queueOptionsDefaults
      * @param array $queueOptions
-     * @throws \Exception
      */
-    private function runJobs($workerName, $startTime, $maxRuntime, $idleTime, $maxJobs, array $restrictedQueues, array $queueOptionsDefaults, array $queueOptions)
+    private function runJobs(?string $workerName, int $startTime, int $maxRuntime, int $idleTime, int $maxJobs, array $restrictedQueues, array $queueOptionsDefaults, array $queueOptions): void
     {
-        $hasPcntl = extension_loaded('pcntl');
+        $hasPcntl = \extension_loaded('pcntl');
 
         if ($this->verbose) {
             $this->output->writeln('Running jobs');
@@ -205,14 +209,14 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
             $this->startJobs($workerName, $idleTime, $maxJobs, $restrictedQueues, $queueOptionsDefaults, $queueOptions);
 
             $waitTimeInMs = random_int(500, 1000);
-            usleep($waitTimeInMs * 1E3);
+            usleep($waitTimeInMs * 1000);
         }
 
         if ($this->verbose) {
             $this->output->writeln('Entering shutdown sequence, waiting for running jobs to terminate...');
         }
 
-        while ( ! empty($this->runningJobs)) {
+        while (!empty($this->runningJobs)) {
             sleep(5);
             $this->checkRunningJobs();
         }
@@ -222,9 +226,9 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
         }
     }
 
-    private function setupSignalHandlers()
+    private function setupSignalHandlers(): void
     {
-        pcntl_signal(SIGTERM, function() {
+        pcntl_signal(SIGTERM, function () {
             if ($this->verbose) {
                 $this->output->writeln('Received SIGTERM signal.');
             }
@@ -234,16 +238,16 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     }
 
     /**
-     * @param $workerName
-     * @param $idleTime
-     * @param $maxJobs
+     * @param string|null $workerName
+     * @param int $idleTime
+     * @param int $maxJobs
      * @param array $restrictedQueues
      * @param array $queueOptionsDefaults
      * @param array $queueOptions
      */
-    private function startJobs($workerName, $idleTime, $maxJobs, array $restrictedQueues, array $queueOptionsDefaults, array $queueOptions)
+    private function startJobs(?string $workerName, int $idleTime, int $maxJobs, array $restrictedQueues, array $queueOptionsDefaults, array $queueOptions): void
     {
-        $excludedIds = array();
+        $excludedIds = [];
         while (count($this->runningJobs) < $maxJobs) {
             $pendingJob = $this->jobRepository->findOneStartableAndAquireLock(
                 $workerName,
@@ -265,12 +269,13 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     /**
      * @param array $queueOptionsDefaults
      * @param array $queueOptions
-     * @param $maxConcurrentJobs
+     * @param int $maxConcurrentJobs
+     *
      * @return array
      */
-    private function getExcludedQueues(array $queueOptionsDefaults, array $queueOptions, $maxConcurrentJobs)
+    private function getExcludedQueues(array $queueOptionsDefaults, array $queueOptions, int $maxConcurrentJobs): array
     {
-        $excludedQueues = array();
+        $excludedQueues = [];
         foreach ($this->getRunningJobsPerQueue() as $queue => $count) {
             if ($count >= $this->getMaxConcurrentJobs($queue, $queueOptionsDefaults, $queueOptions, $maxConcurrentJobs)) {
                 $excludedQueues[] = $queue;
@@ -281,20 +286,21 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     }
 
     /**
-     * @param $queue
+     * @param string $queue
      * @param array $queueOptionsDefaults
      * @param array $queueOptions
-     * @param $maxConcurrentJobs
+     * @param int $maxConcurrentJobs
+     *
      * @return int
      */
-    private function getMaxConcurrentJobs($queue, array $queueOptionsDefaults, array $queueOptions, $maxConcurrentJobs)
+    private function getMaxConcurrentJobs(string $queue, array $queueOptionsDefaults, array $queueOptions, int $maxConcurrentJobs): int
     {
         if (isset($queueOptions[$queue]['max_concurrent_jobs'])) {
-            return (integer) $queueOptions[$queue]['max_concurrent_jobs'];
+            return (int) $queueOptions[$queue]['max_concurrent_jobs'];
         }
 
         if (isset($queueOptionsDefaults['max_concurrent_jobs'])) {
-            return (integer) $queueOptionsDefaults['max_concurrent_jobs'];
+            return (int) $queueOptionsDefaults['max_concurrent_jobs'];
         }
 
         return $maxConcurrentJobs;
@@ -303,61 +309,62 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     /**
      * @return array
      */
-    private function getRunningJobsPerQueue()
+    private function getRunningJobsPerQueue(): array
     {
-        $runningJobsPerQueue = array();
+        $runningJobsPerQueue = [];
         foreach ($this->runningJobs as $jobDetails) {
             /** @var JobInterface $job */
             $job = $jobDetails['job'];
 
             $queue = $job->getQueue();
-            if ( ! isset($runningJobsPerQueue[$queue])) {
+            if (!isset($runningJobsPerQueue[$queue])) {
                 $runningJobsPerQueue[$queue] = 0;
             }
-            $runningJobsPerQueue[$queue] += 1;
+            ++$runningJobsPerQueue[$queue];
         }
 
         return $runningJobsPerQueue;
     }
 
-    private function checkRunningJobs()
+    private function checkRunningJobs(): void
     {
         foreach ($this->runningJobs as $i => &$data) {
             $newOutput = substr($data['process']->getOutput(), $data['output_pointer']);
-            $data['output_pointer'] += strlen($newOutput);
+            $data['output_pointer'] += \strlen($newOutput);
 
             $newErrorOutput = substr($data['process']->getErrorOutput(), $data['error_output_pointer']);
-            $data['error_output_pointer'] += strlen($newErrorOutput);
+            $data['error_output_pointer'] += \strlen($newErrorOutput);
 
-            if ( ! empty($newOutput)) {
+            if (!empty($newOutput)) {
                 $event = new NewOutputEvent($data['job'], $newOutput, NewOutputEvent::TYPE_STDOUT);
                 $this->eventDispatcher->dispatch(SetonoSyliusSchedulerPluginEvent::JOB_NEW_OUTPUT, $event);
                 $newOutput = $event->getNewOutput();
             }
 
-            if ( ! empty($newErrorOutput)) {
+            if (!empty($newErrorOutput)) {
                 $event = new NewOutputEvent($data['job'], $newErrorOutput, NewOutputEvent::TYPE_STDERR);
                 $this->eventDispatcher->dispatch(SetonoSyliusSchedulerPluginEvent::JOB_NEW_OUTPUT, $event);
                 $newErrorOutput = $event->getNewOutput();
             }
 
             if ($this->verbose) {
-                if ( ! empty($newOutput)) {
-                    $this->output->writeln('Job '.$data['job']->getId().': '.str_replace("\n", "\nJob ".$data['job']->getId().": ", $newOutput));
+                if (!empty($newOutput)) {
+                    $this->output->writeln('Job ' . $data['job']->getId() . ': ' . str_replace("\n", "\nJob " . $data['job']->getId() . ': ', $newOutput));
                 }
 
-                if ( ! empty($newErrorOutput)) {
-                    $this->output->writeln('Job '.$data['job']->getId().': '.str_replace("\n", "\nJob ".$data['job']->getId().": ", $newErrorOutput));
+                if (!empty($newErrorOutput)) {
+                    $this->output->writeln('Job ' . $data['job']->getId() . ': ' . str_replace("\n", "\nJob " . $data['job']->getId() . ': ', $newErrorOutput));
                 }
             }
 
             // Check whether this process exceeds the maximum runtime, and terminate if that is
             // the case.
             $runtime = time() - $data['job']->getStartedAt()->getTimestamp();
+            /** @noinspection NotOptimalIfConditionsInspection */
             if ($data['job']->getMaxRuntime() > 0 && $runtime > $data['job']->getMaxRuntime()) {
                 $data['process']->stop(5);
 
-                $this->output->writeln($data['job'].' terminated; maximum runtime exceeded.');
+                $this->output->writeln($data['job'] . ' terminated; maximum runtime exceeded.');
                 $this->jobManager->closeJob($data['job'], JobInterface::STATE_TERMINATED);
                 unset($this->runningJobs[$i]);
 
@@ -376,7 +383,7 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
                 continue;
             }
 
-            $this->output->writeln($data['job'].' finished with exit code '.$data['process']->getExitCode().'.');
+            $this->output->writeln($data['job'] . ' finished with exit code ' . $data['process']->getExitCode() . '.');
 
             // If the Job exited with an exception, let's reload it so that we
             // get access to the stack trace. This might be useful for listeners.
@@ -397,9 +404,9 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
     }
 
     /**
-     * @param Job $job
+     * @param JobInterface $job
      */
-    private function startJob(JobInterface $job)
+    private function startJob(JobInterface $job): void
     {
         $event = new StateChangeEvent($job, JobInterface::STATE_RUNNING);
         $this->eventDispatcher->dispatch(SetonoSyliusSchedulerPluginEvent::JOB_STATE_CHANGED, $event);
@@ -422,23 +429,26 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
 
         $args = $this->getBasicCommandLineArgs();
         $args[] = $job->getCommand();
-        $args[] = '--jms-job-id='.$job->getId();
+        $args[] = '--jms-job-id=' . $job->getId();
 
         foreach ($job->getArgs() as $arg) {
             $args[] = $arg;
         }
 
-        $proc = new Process($args);
-        $proc->start();
-        $this->output->writeln(sprintf('Started %s.', $job));
+        $process = new Process($args);
+        $process->start();
+        $this->output->writeln(sprintf(
+            'Started %s.',
+            (string) $job
+        ));
 
-        $this->runningJobs[] = array(
-            'process' => $proc,
+        $this->runningJobs[] = [
+            'process' => $process,
             'job' => $job,
             'start_time' => time(),
             'output_pointer' => 0,
             'error_output_pointer' => 0,
-        );
+        ];
     }
 
     /**
@@ -449,6 +459,8 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
      * where it might be terminated abruptly (like a PHP segfault, a SIGTERM signal, etc.).
      *
      * In such an error condition, these jobs are cleaned-up on restart of this command.
+     *
+     * @param string $workerName
      */
     private function cleanUpStaleJobs(string $workerName): void
     {
@@ -458,7 +470,7 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
             // If the original job has retry jobs, then one of them is still in
             // running state. We can skip the original job here as it will be
             // processed automatically once the retry job is processed.
-            if ( ! $job->isRetryJob() && count($job->getRetryJobs()) > 0) {
+            if (!$job->isRetryJob() && count($job->getRetryJobs()) > 0) {
                 continue;
             }
 
@@ -467,9 +479,9 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
             $args[] = $job->getId();
 
             // We use a separate process to clean up.
-            $proc = new Process($args);
-            if (0 !== $proc->run()) {
-                $ex = new ProcessFailedException($proc);
+            $process = new Process($args);
+            if (0 !== $process->run()) {
+                $ex = new ProcessFailedException($process);
 
                 $this->output->writeln(sprintf(
                     'There was an error when marking %s as incomplete: %s',
@@ -485,11 +497,11 @@ class RunCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareC
      */
     private function getBasicCommandLineArgs(): array
     {
-        $args = array(
+        $args = [
             PHP_BINARY,
             $_SERVER['SYMFONY_CONSOLE_FILE'] ?? $_SERVER['argv'][0],
-            '--env='.$this->env
-        );
+            '--env=' . $this->env,
+        ];
 
         if ($this->verbose) {
             $args[] = '--verbose';

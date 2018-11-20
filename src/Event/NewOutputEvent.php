@@ -1,18 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Event;
 
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 
 class NewOutputEvent extends JobEvent
 {
-    const TYPE_STDOUT = 1;
-    const TYPE_STDERR = 2;
+    public const TYPE_STDOUT = 1;
+    public const TYPE_STDERR = 2;
 
+    /**
+     * @var string
+     */
     private $newOutput;
+
+    /**
+     * @var int
+     */
     private $type;
 
-    public function __construct(JobInterface $job, $newOutput, $type = self::TYPE_STDOUT)
+    /**
+     * @param JobInterface $job
+     * @param string $newOutput
+     * @param int $type
+     */
+    public function __construct(JobInterface $job, string $newOutput, int $type = self::TYPE_STDOUT)
     {
         parent::__construct($job);
 
@@ -20,17 +34,26 @@ class NewOutputEvent extends JobEvent
         $this->type = $type;
     }
 
-    public function getNewOutput()
+    /**
+     * @return string
+     */
+    public function getNewOutput(): string
     {
         return $this->newOutput;
     }
 
-    public function setNewOutput($output)
+    /**
+     * @param string $output
+     */
+    public function setNewOutput(string $output): void
     {
         $this->newOutput = $output;
     }
 
-    public function getType()
+    /**
+     * @return int
+     */
+    public function getType(): int
     {
         return $this->type;
     }

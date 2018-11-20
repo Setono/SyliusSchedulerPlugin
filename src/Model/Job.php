@@ -37,7 +37,7 @@ class Job implements JobInterface
     private $queue = self::DEFAULT_QUEUE;
 
     /**
-     * @var int|int
+     * @var int
      */
     private $priority = self::PRIORITY_DEFAULT;
 
@@ -113,15 +113,16 @@ class Job implements JobInterface
 
     /**
      * @param string $state
+     *
      * @return bool
      */
     public static function isNonSuccessfulFinalState(string $state): bool
     {
-        return in_array($state, [
+        return \in_array($state, [
             self::STATE_CANCELED,
             self::STATE_FAILED,
             self::STATE_INCOMPLETE,
-            self::STATE_TERMINATED
+            self::STATE_TERMINATED,
         ], true);
     }
 
@@ -130,7 +131,7 @@ class Job implements JobInterface
      */
     public static function getStates(): array
     {
-        return array(
+        return [
             self::STATE_NEW,
             self::STATE_PENDING,
             self::STATE_CANCELED,
@@ -138,8 +139,8 @@ class Job implements JobInterface
             self::STATE_FINISHED,
             self::STATE_FAILED,
             self::STATE_TERMINATED,
-            self::STATE_INCOMPLETE
-        );
+            self::STATE_INCOMPLETE,
+        ];
     }
 
     public function __construct()
@@ -216,7 +217,7 @@ class Job implements JobInterface
      */
     public function isInFinalState(): bool
     {
-        return ! $this->isNew() && ! $this->isPending() && ! $this->isRunning();
+        return !$this->isNew() && !$this->isPending() && !$this->isRunning();
     }
 
     /**
@@ -244,8 +245,8 @@ class Job implements JobInterface
 
         switch ($this->state) {
             case self::STATE_NEW:
-                if ( ! in_array($newState, array(self::STATE_PENDING, self::STATE_CANCELED), true)) {
-                    throw new InvalidStateTransitionException($this, $newState, array(self::STATE_PENDING, self::STATE_CANCELED));
+                if (!\in_array($newState, [self::STATE_PENDING, self::STATE_CANCELED], true)) {
+                    throw new InvalidStateTransitionException($this, $newState, [self::STATE_PENDING, self::STATE_CANCELED]);
                 }
 
                 if (self::STATE_CANCELED === $newState) {
@@ -253,38 +254,34 @@ class Job implements JobInterface
                 }
 
                 break;
-
             case self::STATE_PENDING:
-                if ( ! in_array($newState, array(self::STATE_RUNNING, self::STATE_CANCELED), true)) {
-                    throw new InvalidStateTransitionException($this, $newState, array(self::STATE_RUNNING, self::STATE_CANCELED));
+                if (!\in_array($newState, [self::STATE_RUNNING, self::STATE_CANCELED], true)) {
+                    throw new InvalidStateTransitionException($this, $newState, [self::STATE_RUNNING, self::STATE_CANCELED]);
                 }
 
                 if ($newState === self::STATE_RUNNING) {
                     $this->startedAt = new \DateTime();
                     $this->checkedAt = new \DateTime();
-                } else if ($newState === self::STATE_CANCELED) {
+                } elseif ($newState === self::STATE_CANCELED) {
                     $this->closedAt = new \DateTime();
                 }
 
                 break;
-
             case self::STATE_RUNNING:
-                if ( ! in_array($newState, array(self::STATE_FINISHED, self::STATE_FAILED, self::STATE_TERMINATED, self::STATE_INCOMPLETE))) {
-                    throw new InvalidStateTransitionException($this, $newState, array(self::STATE_FINISHED, self::STATE_FAILED, self::STATE_TERMINATED, self::STATE_INCOMPLETE));
+                if (!\in_array($newState, [self::STATE_FINISHED, self::STATE_FAILED, self::STATE_TERMINATED, self::STATE_INCOMPLETE], true)) {
+                    throw new InvalidStateTransitionException($this, $newState, [self::STATE_FINISHED, self::STATE_FAILED, self::STATE_TERMINATED, self::STATE_INCOMPLETE]);
                 }
 
                 $this->closedAt = new \DateTime();
 
                 break;
-
             case self::STATE_FINISHED:
             case self::STATE_FAILED:
             case self::STATE_TERMINATED:
             case self::STATE_INCOMPLETE:
                 throw new InvalidStateTransitionException($this, $newState);
-
             default:
-                throw new LogicException('The previous cases were exhaustive. Unknown state: '.$this->state);
+                throw new LogicException('The previous cases were exhaustive. Unknown state: ' . $this->state);
         }
 
         $this->state = $newState;
@@ -453,7 +450,7 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function getExitCode(): int
+    public function getExitCode(): ?int
     {
         return $this->exitCode;
     }
@@ -530,11 +527,11 @@ class Job implements JobInterface
     public function setOriginalJob(JobInterface $job): void
     {
         if (self::STATE_PENDING !== $this->state) {
-            throw new \LogicException($this.' must be in state "PENDING".');
+            throw new \LogicException($this . ' must be in state "PENDING".');
         }
 
         if (null !== $this->originalJob) {
-            throw new \LogicException($this.' already has an original job set.');
+            throw new \LogicException($this . ' already has an original job set.');
         }
 
         $this->originalJob = $job;
@@ -575,7 +572,7 @@ class Job implements JobInterface
     public function isRetried(): bool
     {
         foreach ($this->retryJobs as $job) {
-            if ( ! $job->isInFinalState()) {
+            if (!$job->isInFinalState()) {
                 return true;
             }
         }
@@ -602,7 +599,7 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function setQueue(?string $queue): void
+    public function setQueue(string $queue): void
     {
         $this->queue = $queue;
     }
@@ -610,7 +607,7 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function getQueue(): ?string
+    public function getQueue(): string
     {
         return $this->queue;
     }
@@ -704,7 +701,7 @@ class Job implements JobInterface
             return false;
         }
 
-        if (self::STATE_PENDING === $this->state && ! $this->isStartable()) {
+        if (self::STATE_PENDING === $this->state && !$this->isStartable()) {
             return false;
         }
 

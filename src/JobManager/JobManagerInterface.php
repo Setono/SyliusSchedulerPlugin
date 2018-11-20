@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\JobManager;
 
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
@@ -7,18 +9,20 @@ use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 interface JobManagerInterface
 {
     /**
-     * @param $command
+     * @param string $command
      * @param array $args
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
-    public function getJob($command, array $args = array()): ?JobInterface;
+    public function getJob(string $command, array $args = []): ?JobInterface;
 
     /**
      * @param string $command
      * @param array $args
+     *
      * @return JobInterface
      */
-    public function getOrCreateIfNotExists(string $command, array $args = array()): JobInterface;
+    public function getOrCreateIfNotExists(string $command, array $args = []): JobInterface;
 
     /**
      * @param JobInterface $job

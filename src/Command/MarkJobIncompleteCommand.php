@@ -1,14 +1,18 @@
 <?php
 
+/** @noinspection ReturnTypeCanBeDeclaredInspection */
+
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Command;
 
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
 use Setono\SyliusSchedulerPlugin\JobManager\JobManager;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class MarkJobIncompleteCommand extends ContainerAwareCommand
 {
@@ -56,7 +60,7 @@ class MarkJobIncompleteCommand extends ContainerAwareCommand
             $input->getArgument('job-id')
         );
 
-        if ($job === null) {
+        if (!$job instanceof JobInterface) {
             $output->writeln('<error>Job was not found.</error>');
 
             return 1;

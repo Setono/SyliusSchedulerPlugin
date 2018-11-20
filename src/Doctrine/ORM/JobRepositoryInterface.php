@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Doctrine\ORM;
 
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
@@ -10,29 +12,33 @@ interface JobRepositoryInterface extends RepositoryInterface
     /**
      * @param string $command
      * @param array $args
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
-    public function findOneByCommand(string $command, array $args = array()): ?JobInterface;
+    public function findOneByCommand(string $command, array $args = []): ?JobInterface;
 
     /**
      * @param string $command
      * @param array $args
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
-    public function findFirstOneByCommand(string $command, array $args = array()): ?JobInterface;
+    public function findFirstOneByCommand(string $command, array $args = []): ?JobInterface;
 
     /**
      * @param array $excludedIds
      * @param array $excludedQueues
      * @param array $restrictedQueues
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
-    public function findOnePending(array $excludedIds = array(), array $excludedQueues = array(), array $restrictedQueues = array()): ?JobInterface;
+    public function findOnePending(array $excludedIds = [], array $excludedQueues = [], array $restrictedQueues = []): ?JobInterface;
 
     /**
      * @param \DateTime $retentionTime
      * @param array $excludedIds
      * @param int $limit
+     *
      * @return array|JobInterface[]
      */
     public function findSucceededBefore(\DateTime $retentionTime, array $excludedIds = [], $limit = 100): array;
@@ -41,6 +47,7 @@ interface JobRepositoryInterface extends RepositoryInterface
      * @param \DateTime $retentionTime
      * @param array $excludedIds
      * @param int $limit
+     *
      * @return array|JobInterface[]
      */
     public function findFinishedBefore(\DateTime $retentionTime, array $excludedIds = [], $limit = 100): array;
@@ -49,6 +56,7 @@ interface JobRepositoryInterface extends RepositoryInterface
      * @param \DateTime $retentionTime
      * @param array $excludedIds
      * @param int $limit
+     *
      * @return array|JobInterface[]
      */
     public function findCancelledBefore(\DateTime $retentionTime, array $excludedIds = [], $limit = 100): array;
@@ -58,12 +66,14 @@ interface JobRepositoryInterface extends RepositoryInterface
      * @param array $excludedIds
      * @param array $excludedQueues
      * @param array $restrictedQueues
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
-    public function findOneStartableAndAquireLock(string $workerName, array &$excludedIds = array(), $excludedQueues = array(), $restrictedQueues = array()): ?JobInterface;
+    public function findOneStartableAndAquireLock(string $workerName, array &$excludedIds = [], $excludedQueues = [], $restrictedQueues = []): ?JobInterface;
 
     /**
      * @param JobInterface $job
+     *
      * @return array|JobInterface[]
      */
     public function findIncomingDependencies(JobInterface $job): array;
@@ -71,18 +81,21 @@ interface JobRepositoryInterface extends RepositoryInterface
     /**
      * @param array|int[] $excludedIds
      * @param \DateTime|null $maxAge
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
-    public function findOneStale(array $excludedIds = array(), ?\DateTime $maxAge = null): ?JobInterface;
+    public function findOneStale(array $excludedIds = [], ?\DateTime $maxAge = null): ?JobInterface;
 
     /**
      * @param string $workerName
+     *
      * @return array|JobInterface[]
      */
     public function findStale(string $workerName): array;
 
     /**
      * @param int $limit
+     *
      * @return array|JobInterface[]
      */
     public function findLastJobsWithError($limit = 10): array;

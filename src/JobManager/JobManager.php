@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\JobManager;
 
 use Doctrine\ORM\EntityManager;
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
-use Setono\SyliusSchedulerPlugin\Factory\JobFactory;
-use Setono\SyliusSchedulerPlugin\Model\Job;
-use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\Event\StateChangeEvent;
+use Setono\SyliusSchedulerPlugin\Factory\JobFactory;
+use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\Retry\RetrySchedulerInterface;
 use Setono\SyliusSchedulerPlugin\SetonoSyliusSchedulerPluginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -60,10 +61,7 @@ class JobManager
         $this->retryScheduler = $retryScheduler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getJob($command, array $args = array()): ?JobInterface
+    public function getJob(string $command, array $args = []): ?JobInterface
     {
         if (null !== $job = $this->jobRepository->findOneByCommand($command, $args)) {
             return $job;
@@ -79,17 +77,22 @@ class JobManager
     /**
      * @todo Decide if we need it - it not used in any place
      *
-     * {@inheritdoc}
+     * @param string $command
+     * @param array $args
+     *
+     * @return JobInterface
      */
-    public function getOrCreateIfNotExists(string $command, array $args = array()): JobInterface
+    public function getOrCreateIfNotExists(string $command, array $args = []): JobInterface
     {
-        if (null !== $job = $this->jobRepository->findOneByCommand($command, $args)) {
+        $job = $this->jobRepository->findOneByCommand($command, $args);
+        if ($job instanceof JobInterface) {
             return $job;
         }
 
         $job = $this->jobFactory->createForCommand($command, $args);
         $this->jobRepository->add($job);
 
+        /** @var JobInterface $firstJob */
         $firstJob = $this->jobRepository->findFirstOneByCommand($command, $args);
         if ($firstJob === $job) {
             $job->setState(JobInterface::STATE_PENDING);
@@ -104,13 +107,15 @@ class JobManager
     }
 
     /**
-     * {@inheritdoc}
+     * @param JobInterface $job
+     * @param string $finalState
      */
     public function closeJob(JobInterface $job, string $finalState): void
     {
         $this->entityManager->getConnection()->beginTransaction();
+
         try {
-            $visitedJobs = array();
+            $visitedJobs = [];
             $this->closeJobInternal($job, $finalState, $visitedJobs);
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
@@ -119,14 +124,14 @@ class JobManager
             foreach ($visitedJobs as $visitedJob) {
                 // If the job is an original job which is now being retried, let's
                 // not remove it just yet.
-                if ( ! $visitedJob->isClosedNonSuccessful() || $visitedJob->isRetryJob()) {
+                if (!$visitedJob->isClosedNonSuccessful() || $visitedJob->isRetryJob()) {
                     continue;
                 }
 
                 $this->entityManager->detach($visitedJob);
             }
         } catch (\Exception $ex) {
-            $this->entityManager->getConnection()->rollback();
+            $this->entityManager->getConnection()->rollBack();
 
             throw $ex;
         }
@@ -137,9 +142,9 @@ class JobManager
      * @param string $finalState
      * @param array $visited
      */
-    private function closeJobInternal(JobInterface $job, string $finalState, array &$visited = array())
+    private function closeJobInternal(JobInterface $job, string $finalState, array &$visited = []): void
     {
-        if (in_array($job, $visited, true)) {
+        if (\in_array($job, $visited, true)) {
             return;
         }
         $visited[] = $job;
@@ -170,7 +175,6 @@ class JobManager
                 }
 
                 return;
-
             case JobInterface::STATE_FAILED:
             case JobInterface::STATE_TERMINATED:
             case JobInterface::STATE_INCOMPLETE:
@@ -211,7 +215,7 @@ class JobManager
                 /** @var JobInterface $dep */
                 foreach ($this->jobRepository->findIncomingDependencies($job) as $dep) {
                     // This is a safe-guard to avoid blowing up if there is a database inconsistency.
-                    if ( ! $dep->isPending() && ! $dep->isNew()) {
+                    if (!$dep->isPending() && !$dep->isNew()) {
                         continue;
                     }
 
@@ -219,7 +223,6 @@ class JobManager
                 }
 
                 return;
-
             case JobInterface::STATE_FINISHED:
                 if ($job->isRetryJob()) {
                     $job->getOriginalJob()->setState($finalState);
@@ -231,7 +234,6 @@ class JobManager
                 $this->entityManager->persist($job);
 
                 return;
-
             default:
                 throw new \LogicException(sprintf(
                     'Non allowed state "%s" in closeJobInternal().',

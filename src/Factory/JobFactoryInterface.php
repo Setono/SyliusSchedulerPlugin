@@ -12,7 +12,8 @@ interface JobFactoryInterface extends FactoryInterface
     /**
      * @param string $command
      * @param array $args
+     *
      * @return JobInterface
      */
-    public function createForCommand(string $command, array $args = array()): JobInterface;
+    public function createForCommand(string $command, array $args = []): JobInterface;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Command;
 
 use Doctrine\ORM\EntityManager;
@@ -47,13 +49,16 @@ class CleanUpCommand extends ContainerAwareCommand
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @noinspection ReturnTypeCanBeDeclaredInspection
+     */
     protected function configure()
     {
         $this
             ->setDescription('Cleans up jobs which exceed the maximum retention time.')
             ->addOption('max-retention', null, InputOption::VALUE_REQUIRED, 'The maximum retention time (value must be parsable by DateTime).', '7 days')
             ->addOption('max-retention-succeeded', null, InputOption::VALUE_REQUIRED, 'The maximum retention time for succeeded jobs (value must be parsable by DateTime).', '1 hour')
-            ->addOption('per-call', null, InputOption::VALUE_REQUIRED, 'The maximum number of jobs to clean-up per call.', 1000)
+            ->addOption('per-call', null, InputOption::VALUE_REQUIRED, 'The maximum number of jobs to clean-up per call.', '1000')
         ;
     }
 
@@ -69,7 +74,7 @@ class CleanUpCommand extends ContainerAwareCommand
     /**
      * {@inheritdoc}
      */
-    private function closeStaleJobs()
+    private function closeStaleJobs(): void
     {
         foreach ($this->findStaleJobs() as $job) {
             if ($job->isRetried()) {
@@ -85,7 +90,7 @@ class CleanUpCommand extends ContainerAwareCommand
      */
     private function findStaleJobs(): \Generator
     {
-        $excludedIds = array(-1);
+        $excludedIds = [-1];
 
         do {
             $this->entityManager->clear();
@@ -106,18 +111,20 @@ class CleanUpCommand extends ContainerAwareCommand
      */
     private function removeExpiredJobs(InputInterface $input): void
     {
+        $perCall = (int) $input->getOption('per-call');
+
         $connection = $this->entityManager->getConnection();
         $incomingDepsSql = $connection->getDatabasePlatform()
-            ->modifyLimitQuery("SELECT 1 FROM setono_sylius_scheduler_job_dependencies WHERE destination_job_id = :id", 1)
+            ->modifyLimitQuery('SELECT 1 FROM setono_sylius_scheduler_job_dependencies WHERE destination_job_id = :id', 1)
         ;
 
         $count = 0;
         foreach ($this->findExpiredJobs($input) as $job) {
-            $count++;
+            ++$count;
 
-            $result = $connection->executeQuery($incomingDepsSql, array('id' => $job->getId()));
+            $result = $connection->executeQuery($incomingDepsSql, ['id' => $job->getId()]);
             if ($result->fetchColumn() !== false) {
-                $this->entityManager->transactional(function() use ($job) {
+                $this->entityManager->transactional(function () use ($job) {
                     $this->resolveDependencies($job);
                     $this->entityManager->remove($job);
                 });
@@ -127,7 +134,7 @@ class CleanUpCommand extends ContainerAwareCommand
 
             $this->entityManager->remove($job);
 
-            if ($count >= $input->getOption('per-call')) {
+            if ($count >= $perCall) {
                 break;
             }
         }
@@ -142,35 +149,38 @@ class CleanUpCommand extends ContainerAwareCommand
     {
         // If this job has failed, or has otherwise not succeeded, we need to set the
         // incoming dependencies to failed if that has not been done already.
-        if ( ! $job->isFinished()) {
-            foreach ($this->jobRepository->findIncomingDependencies($job) as $incomingDep) {
-                if ($incomingDep->isInFinalState()) {
+        if (!$job->isFinished()) {
+            /** @var JobInterface $incomingDependency */
+            foreach ($this->jobRepository->findIncomingDependencies($job) as $incomingDependency) {
+                if ($incomingDependency->isInFinalState()) {
                     continue;
                 }
 
                 $finalState = JobInterface::STATE_CANCELED;
+                /** @noinspection DisconnectedForeachInstructionInspection */
                 if ($job->isRunning()) {
                     $finalState = JobInterface::STATE_FAILED;
                 }
 
-                $this->jobManager->closeJob($incomingDep, $finalState);
+                $this->jobManager->closeJob($incomingDependency, $finalState);
             }
         }
 
         $this->entityManager->getConnection()
             ->executeUpdate(
-                "DELETE FROM setono_sylius_scheduler_job_dependencies WHERE destination_job_id = :id",
-                array('id' => $job->getId())
+                'DELETE FROM setono_sylius_scheduler_job_dependencies WHERE destination_job_id = :id',
+                ['id' => $job->getId()]
             );
     }
 
     /**
      * @param InputInterface $input
+     *
      * @return \Generator|JobInterface[]
      */
     private function findExpiredJobs(InputInterface $input): \Generator
     {
-        $succeededJobs = function(array $excludedIds) use ($input){
+        $succeededJobs = function (array $excludedIds) use ($input) {
             return $this->jobRepository->findSucceededBefore(
                 new \DateTime(sprintf(
                     '-%s',
@@ -183,7 +193,7 @@ class CleanUpCommand extends ContainerAwareCommand
             yield $job;
         }
 
-        $finishedJobs = function(array $excludedIds) use ($input) {
+        $finishedJobs = function (array $excludedIds) use ($input) {
             return $this->jobRepository->findFinishedBefore(
                 new \DateTime(sprintf(
                     '-%s',
@@ -196,7 +206,7 @@ class CleanUpCommand extends ContainerAwareCommand
             yield $job;
         }
 
-        $canceledJobs = function(array $excludedIds) use ($input) {
+        $canceledJobs = function (array $excludedIds) use ($input) {
             return $this->jobRepository->findCancelledBefore(
                 new \DateTime(sprintf(
                     '-%s',
@@ -212,11 +222,12 @@ class CleanUpCommand extends ContainerAwareCommand
 
     /**
      * @param callable $resultProducer
+     *
      * @return \Generator|JobInterface[]
      */
     private function whileResults(callable $resultProducer): \Generator
     {
-        $excludedIds = array(-1);
+        $excludedIds = [-1];
         do {
             /** @var JobInterface[] $jobs */
             $jobs = $resultProducer($excludedIds);
@@ -224,6 +235,6 @@ class CleanUpCommand extends ContainerAwareCommand
                 $excludedIds[] = $job->getId();
                 yield $job;
             }
-        } while ( ! empty($jobs));
+        } while (!empty($jobs));
     }
 }

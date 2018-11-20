@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Doctrine\ORM;
 
 use Doctrine\DBAL\Connection;
@@ -13,11 +15,11 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function findOneByCommand(string $command, array $args = array()): ?JobInterface
+    public function findOneByCommand(string $command, array $args = []): ?JobInterface
     {
         return $this->createQueryBuilder('j')
-            ->andWhere("j.command = :command")
-            ->andWhere("j.args = :args")
+            ->andWhere('j.command = :command')
+            ->andWhere('j.args = :args')
             ->setParameter('command', $command)
             ->setParameter('args', $args, Type::JSON_ARRAY)
             ->setMaxResults(1)
@@ -28,11 +30,11 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function findFirstOneByCommand(string $command, array $args = array()): ?JobInterface
+    public function findFirstOneByCommand(string $command, array $args = []): ?JobInterface
     {
         return $this->createQueryBuilder('j')
-            ->andWhere("j.command = :command")
-            ->andWhere("j.args = :args")
+            ->andWhere('j.command = :command')
+            ->andWhere('j.args = :args')
             ->orderBy('j.id', RepositoryInterface::ORDER_ASCENDING)
             ->setParameter('command', $command)
             ->setParameter('args', $args, 'json_array')
@@ -44,14 +46,14 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function findOnePending(array $excludedIds = array(), array $excludedQueues = array(), array $restrictedQueues = array()): ?JobInterface
+    public function findOnePending(array $excludedIds = [], array $excludedQueues = [], array $restrictedQueues = []): ?JobInterface
     {
         $qb = $this->createQueryBuilder('j')
             ->orderBy('j.priority', 'ASC')
             ->addOrderBy('j.id', 'ASC')
         ;
 
-        $conditions = array();
+        $conditions = [];
 
         $conditions[] = $qb->expr()->isNull('j.workerName');
 
@@ -61,22 +63,22 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
         $conditions[] = $qb->expr()->eq('j.state', ':state');
         $qb->setParameter('state', JobInterface::STATE_PENDING);
 
-        if ( ! empty($excludedIds)) {
+        if (!empty($excludedIds)) {
             $conditions[] = $qb->expr()->notIn('j.id', ':excludedIds');
             $qb->setParameter('excludedIds', $excludedIds, Connection::PARAM_INT_ARRAY);
         }
 
-        if ( ! empty($excludedQueues)) {
+        if (!empty($excludedQueues)) {
             $conditions[] = $qb->expr()->notIn('j.queue', ':excludedQueues');
             $qb->setParameter('excludedQueues', $excludedQueues, Connection::PARAM_STR_ARRAY);
         }
 
-        if ( ! empty($restrictedQueues)) {
+        if (!empty($restrictedQueues)) {
             $conditions[] = $qb->expr()->in('j.queue', ':restrictedQueues');
             $qb->setParameter('restrictedQueues', $restrictedQueues, Connection::PARAM_STR_ARRAY);
         }
 
-        $qb->where(call_user_func_array(array($qb->expr(), 'andX'), $conditions));
+        $qb->where(\call_user_func_array([$qb->expr(), 'andX'], $conditions));
 
         return $qb->getQuery()->setMaxResults(1)->getOneOrNullResult();
     }
@@ -121,12 +123,12 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     public function findCancelledBefore(\DateTime $retentionTime, array $excludedIds = [], $limit = 100): array
     {
         return $this->createQueryBuilder('j')
-            ->andWhere("j.state = :canceled")
+            ->andWhere('j.state = :canceled')
             ->setParameter('canceled', JobInterface::STATE_CANCELED)
-            ->andWhere("j.createdAt < :maxRetentionTime")
+            ->andWhere('j.createdAt < :maxRetentionTime')
             ->setParameter('maxRetentionTime', $retentionTime)
-            ->andWhere("j.originalJob IS NULL")
-            ->andWhere("j.id NOT IN (:excludedIds)")
+            ->andWhere('j.originalJob IS NULL')
+            ->andWhere('j.id NOT IN (:excludedIds)')
             ->setParameter('excludedIds', $excludedIds)
             ->setMaxResults($limit)
             ->getQuery()
@@ -136,9 +138,14 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function findOneStartableAndAquireLock(string $workerName, array &$excludedIds = array(), $excludedQueues = array(), $restrictedQueues = array()): ?JobInterface
+    public function findOneStartableAndAquireLock(string $workerName, array &$excludedIds = [], $excludedQueues = [], $restrictedQueues = []): ?JobInterface
     {
-        while (null !== $job = $this->findOnePending($excludedIds, $excludedQueues, $restrictedQueues)) {
+        while (true) {
+            $job = $this->findOnePending($excludedIds, $excludedQueues, $restrictedQueues);
+            if (null === $job) {
+                return null;
+            }
+
             if ($job->isStartable() && $this->acquireLock($workerName, $job)) {
                 return $job;
             }
@@ -157,19 +164,20 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     /**
      * @param string $workerName
      * @param JobInterface $job
+     *
      * @return bool
      */
     private function acquireLock(string $workerName, JobInterface $job): bool
     {
         $affectedRows = $this->_em->getConnection()->executeUpdate(
             sprintf(
-                "UPDATE %s SET workerName = :worker WHERE id = :id AND workerName IS NULL",
+                'UPDATE %s SET workerName = :worker WHERE id = :id AND workerName IS NULL',
                 $this->getEntityName()
             ),
-            array(
+            [
                 'worker' => $workerName,
                 'id' => $job->getId(),
-            )
+            ]
         );
 
         if ($affectedRows > 0) {
@@ -188,7 +196,7 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     {
         $jobIds = $this->getJobIdsOfIncomingDependencies($job);
         if (empty($jobIds)) {
-            return array();
+            return [];
         }
 
         return $this->createQueryBuilder('j')
@@ -202,19 +210,20 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
 
     /**
      * @param JobInterface $job
+     *
      * @return array
      */
     private function getJobIdsOfIncomingDependencies(JobInterface $job): array
     {
         return $this->_em->getConnection()
-            ->executeQuery("SELECT source_job_id FROM setono_sylius_scheduler_job_dependencies WHERE destination_job_id = :id", array('id' => $job->getId()))
+            ->executeQuery('SELECT source_job_id FROM setono_sylius_scheduler_job_dependencies WHERE destination_job_id = :id', ['id' => $job->getId()])
             ->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function findOneStale(array $excludedIds = array(), ?\DateTime $maxAge = null): ?JobInterface
+    public function findOneStale(array $excludedIds = [], ?\DateTime $maxAge = null): ?JobInterface
     {
         return $this->createQueryBuilder('j')
             ->andWhere('j.state = :running')
@@ -249,13 +258,13 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     public function findLastJobsWithError($limit = 10): array
     {
         return $this->createQueryBuilder('j')
-            ->andWhere("j.state IN (:errorStates)")
+            ->andWhere('j.state IN (:errorStates)')
             ->setParameter('errorStates', [
                 JobInterface::STATE_TERMINATED,
-                JobInterface::STATE_FAILED
+                JobInterface::STATE_FAILED,
             ])
-            ->andWhere("j.originalJob IS NULL")
-            ->orderBy("j.closedAt", RepositoryInterface::ORDER_DESCENDING)
+            ->andWhere('j.originalJob IS NULL')
+            ->orderBy('j.closedAt', RepositoryInterface::ORDER_DESCENDING)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

@@ -34,7 +34,7 @@ class JobFactory implements JobFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createForCommand(string $command, array $args = array()): JobInterface
+    public function createForCommand(string $command, array $args = []): JobInterface
     {
         /** @var JobInterface $job */
         $job = $this->createNew();

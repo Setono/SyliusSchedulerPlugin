@@ -1,31 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Setono\SyliusSchedulerPlugin\Event;
 
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 
 class StateChangeEvent extends JobEvent
 {
+    /**
+     * @var string
+     */
     private $newState;
 
-    public function __construct(JobInterface $job, $newState)
+    /**
+     * @param JobInterface $job
+     * @param string $newState
+     */
+    public function __construct(JobInterface $job, string $newState)
     {
         parent::__construct($job);
 
         $this->newState = $newState;
     }
 
-    public function getNewState()
+    /**
+     * @return string
+     */
+    public function getNewState(): string
     {
         return $this->newState;
     }
 
-    public function setNewState($state)
+    /**
+     * @param string $state
+     */
+    public function setNewState(string $state): void
     {
         $this->newState = $state;
     }
 
-    public function getOldState()
+    /**
+     * @return string
+     */
+    public function getOldState(): string
     {
         return $this->getJob()->getState();
     }

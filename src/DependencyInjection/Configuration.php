@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection NullPointerExceptionInspection */
+
 declare(strict_types=1);
 
 namespace Setono\SyliusSchedulerPlugin\DependencyInjection;
@@ -67,6 +69,7 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('queue_options')
                 ->useAttributeAsKey('queue')
                 ->prototype('array')
+            ->end()
             ;
         $this->addQueueOptions($queueOptionsNode);
 
@@ -108,9 +111,9 @@ final class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @param ArrayNodeDefinition $def
+     * @param ArrayNodeDefinition $nodeDefinition
      */
-    private function addQueueOptions(ArrayNodeDefinition $nodeDefinition)
+    private function addQueueOptions(ArrayNodeDefinition $nodeDefinition): void
     {
         $nodeDefinition
             ->children()
@@ -118,4 +121,3 @@ final class Configuration implements ConfigurationInterface
         ;
     }
 }
-
