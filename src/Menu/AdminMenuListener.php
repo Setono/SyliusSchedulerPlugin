@@ -32,6 +32,18 @@ final class AdminMenuListener
 
         /** @var ItemInterface $configurationSubmenu */
         $configurationSubmenu = $menu->getChild('configuration');
+
+        $scheduleMenuItem = $configurationSubmenu
+            ->addChild('setono_sylius_scheduler_schedules', [
+                'route' => 'setono_sylius_scheduler_admin_schedule_index',
+            ])
+            ->setAttribute('type', 'link')
+            ->setLabel('setono_sylius_scheduler.menu.admin.main.configuration.schedules')
+            ->setLabelAttributes([
+                'icon' => 'clone',
+            ])
+        ;
+
         $jobsMenuItem = $configurationSubmenu
             ->addChild('setono_sylius_scheduler_jobs', [
                 'route' => 'setono_sylius_scheduler_admin_job_index',
@@ -44,5 +56,6 @@ final class AdminMenuListener
         ;
 
         $this->menuManipulator->moveToFirstPosition($jobsMenuItem);
+        $this->menuManipulator->moveToFirstPosition($scheduleMenuItem);
     }
 }

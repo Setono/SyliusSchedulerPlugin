@@ -17,6 +17,11 @@ class Job implements JobInterface
     private $id;
 
     /**
+     * @var ScheduleInterface
+     */
+    private $schedule;
+
+    /**
      * @var string|null
      */
     private $command;
@@ -170,6 +175,25 @@ class Job implements JobInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchedule(): ?ScheduleInterface
+    {
+        return $this->schedule;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSchedule(?ScheduleInterface $schedule): void
+    {
+        if ($schedule instanceof ScheduleInterface) {
+            $schedule->addJob($this);
+        }
+        $this->schedule = $schedule;
     }
 
     /**

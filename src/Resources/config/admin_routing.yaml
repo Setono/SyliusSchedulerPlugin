@@ -1,4 +1,32 @@
 # Routes (listed for better navigation):
+# - setono_sylius_scheduler_admin_schedule_index
+# - setono_sylius_scheduler_admin_schedule_create
+# - setono_sylius_scheduler_admin_schedule_update
+# - setono_sylius_scheduler_admin_schedule_bulk_delete
+# - setono_sylius_scheduler_admin_schedule_delete
+
+setono_sylius_scheduler_admin_schedule:
+  resource: |
+    alias: setono_sylius_scheduler.schedule
+    section: admin
+    templates: SyliusAdminBundle:Crud
+    except: ['show']
+    redirect: update
+    grid: setono_sylius_scheduler_admin_schedule
+    permission: true
+    vars:
+        all:
+            subheader: setono_sylius_scheduler.ui.manage_schedules
+            templates:
+                form: "@SetonoSyliusSchedulerPlugin/Admin/Schedule/_form.html.twig"
+        index:
+            icon: tasks
+        update:
+            templates:
+                form: "@SetonoSyliusSchedulerPlugin/Admin/Schedule/_form.html.twig"
+  type: sylius.resource
+
+# Routes (listed for better navigation):
 # - setono_sylius_scheduler_admin_job_index
 # - setono_sylius_scheduler_admin_job_create
 # - setono_sylius_scheduler_admin_job_update

@@ -79,6 +79,16 @@ interface JobInterface extends ResourceInterface
     public function __toString();
 
     /**
+     * @return null|ScheduleInterface
+     */
+    public function getSchedule(): ?ScheduleInterface;
+
+    /**
+     * @param null|ScheduleInterface $schedule
+     */
+    public function setSchedule(?ScheduleInterface $schedule): void;
+
+    /**
      * @return string
      */
     public function getState(): string;

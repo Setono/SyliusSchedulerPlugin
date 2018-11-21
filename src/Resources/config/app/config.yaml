@@ -1,3 +1,4 @@
 imports:
     - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/app/fixtures.yaml" }
+    - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/grids/schedule.yaml" }
     - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/grids/job.yaml" }

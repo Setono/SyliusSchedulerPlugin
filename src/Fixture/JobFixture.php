@@ -25,6 +25,7 @@ final class JobFixture extends AbstractResourceFixture
     {
         $resourceNode
             ->children()
+                ->scalarNode('schedule')->cannotBeEmpty()->end()
                 ->scalarNode('command')->cannotBeEmpty()->end()
                 ->arrayNode('args')
                     ->requiresAtLeastOneElement()

@@ -7,9 +7,13 @@ declare(strict_types=1);
 namespace Setono\SyliusSchedulerPlugin\DependencyInjection;
 
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Doctrine\ORM\ScheduleRepository;
 use Setono\SyliusSchedulerPlugin\Form\Type\JobType;
+use Setono\SyliusSchedulerPlugin\Form\Type\ScheduleType;
 use Setono\SyliusSchedulerPlugin\Model\Job;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
+use Setono\SyliusSchedulerPlugin\Model\Schedule;
+use Setono\SyliusSchedulerPlugin\Model\ScheduleInterface;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
@@ -89,6 +93,25 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('resources')
                     ->addDefaultsIfNotSet()
                     ->children()
+
+                        ->arrayNode('schedule')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('options')->end()
+                                ->arrayNode('classes')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->scalarNode('model')->defaultValue(Schedule::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('interface')->defaultValue(ScheduleInterface::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('repository')->defaultValue(ScheduleRepository::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('factory')->defaultValue(Factory::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('form')->defaultValue(ScheduleType::class)->cannotBeEmpty()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+
                         ->arrayNode('job')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -106,6 +129,7 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+
                     ->end()
                 ->end()
             ->end()

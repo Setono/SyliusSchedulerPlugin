@@ -1,13 +1,21 @@
 sylius_grid:
     grids:
-        setono_sylius_scheduler_admin_job:
+        setono_sylius_scheduler_admin_schedule:
             driver:
                 name: doctrine/orm
                 options:
-                    class: "%setono_sylius_scheduler.model.job.class%"
+                    class: "%setono_sylius_scheduler.model.schedule.class%"
             sorting:
                 priority: desc
             fields:
+                code:
+                    type: string
+                    label: setono_sylius_scheduler.ui.code
+                    sortable: ~
+                name:
+                    type: string
+                    label: setono_sylius_scheduler.ui.name
+                    sortable: ~
                 queue:
                     type: string
                     label: setono_sylius_scheduler.ui.queue
@@ -19,33 +27,23 @@ sylius_grid:
                     sortable: ~
                     options:
                         template: "@SetonoSyliusSchedulerPlugin/Grid/Field/commandAndArgs.html.twig"
-                state:
-                    type: twig
-                    label: setono_sylius_scheduler.ui.state
-                    sortable: ~
-                    options:
-                        template: "@SetonoSyliusSchedulerPlugin/Grid/Field/state.html.twig"
                 priority:
                     type: twig
                     label: sylius.ui.priority
                     sortable: ~
                     options:
                         template: "@SyliusUi/Grid/Field/position.html.twig"
+                cronExpression:
+                    type: string
+                    label: setono_sylius_scheduler.ui.cron_expression
+                    sortable: ~
                 createdAt:
                     type: datetime
                     label: setono_sylius_scheduler.ui.created_at
                     sortable: ~
-                executeAfter:
-                    type: datetime
-                    label: setono_sylius_scheduler.ui.execute_after
-                    sortable: ~
-                closedAt:
-                    type: datetime
-                    label: setono_sylius_scheduler.ui.closed_at
-                    sortable: ~
-                retryJobs:
+                jobs:
                     type: twig
-                    label: setono_sylius_scheduler.ui.retry_jobs
+                    label: setono_sylius_scheduler.ui.jobs
                     sortable: ~
                     options:
                         template: "@SetonoSyliusSchedulerPlugin/Grid/Field/itemsCount.html.twig"

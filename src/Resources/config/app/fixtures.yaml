@@ -2,6 +2,14 @@ sylius_fixtures:
     suites:
         default:
             fixtures:
+                setono_scheduler_schedule:
+                    options:
+                        custom:
+                            schedule_oauth_clean:
+                                code: 'schedule_oauth_clean'
+                                name: 'Clean oauth every 2 minutes'
+                                command: 'fos:oauth-server:clean'
+                                cron_expression: '*/2 * * * *'
                 setono_scheduler_job:
                     options:
                         random: 2
@@ -11,7 +19,9 @@ sylius_fixtures:
                                 - 'hi'
                         custom:
                             job_oauth_clean:
+                                schedule: 'schedule_oauth_clean'
                                 command: 'fos:oauth-server:clean'
+                                execute_after: '+2 minute'
                             job_echo_time:
                                 command: 'echo'
                                 args:

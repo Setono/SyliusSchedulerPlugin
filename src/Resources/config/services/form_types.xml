@@ -5,6 +5,9 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
+        <parameter key="setono_sylius_scheduler.form.type.schedule.validation_groups" type="collection">
+            <parameter>setono_sylius_scheduler</parameter>
+        </parameter>
         <parameter key="setono_sylius_scheduler.form.type.job.validation_groups" type="collection">
             <parameter>setono_sylius_scheduler</parameter>
         </parameter>
@@ -12,6 +15,14 @@
 
     <services>
         <defaults public="true" />
+
+        <service id="setono_sylius_scheduler.form.type.schedule"
+                 class="Setono\SyliusSchedulerPlugin\Form\Type\ScheduleType">
+            <argument>%setono_sylius_scheduler.model.schedule.class%</argument>
+            <argument>%setono_sylius_scheduler.form.type.schedule.validation_groups%</argument>
+
+            <tag name="form.type" />
+        </service>
 
         <service id="setono_sylius_scheduler.form.type.job"
                  class="Setono\SyliusSchedulerPlugin\Form\Type\JobType">

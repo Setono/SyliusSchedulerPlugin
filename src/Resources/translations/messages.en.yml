@@ -14,6 +14,16 @@ setono_sylius_scheduler:
         closed_at: Closed at
         retry_jobs: Retry jobs
 
+        schedules: Schedules
+        new_schedule: New schedule
+        edit_schedule: Edit schedule
+        manage_schedules: Manage schedules
+
+        # Index
+        code: Code
+        name: Name
+        cron_expression: Cron expression
+
     form:
         job:
             command: Command
@@ -23,9 +33,20 @@ setono_sylius_scheduler:
             queue: Queue
             priority: Priority
             execute_after: Execute after
+        schedule:
+            code: Code
+            name: Name
+            command: Command
+            args:
+                label: Args
+                add_arg: Add argument
+            queue: Queue
+            priority: Priority
+            cron_expression: Cron expression
 
     menu:
         admin:
             main:
                 configuration:
                     jobs: Scheduler jobs
+                    schedules: Schedules

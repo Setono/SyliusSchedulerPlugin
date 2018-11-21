@@ -5,9 +5,27 @@
 
     <services>
 
+        <!-- Schedule -->
+        <service id="setono_sylius_scheduler.fixture.example_factory.schedule"
+                 class="Setono\SyliusSchedulerPlugin\Fixture\Factory\ScheduleExampleFactory">
+
+            <argument type="service" id="setono_sylius_scheduler.factory.schedule" />
+            <argument type="service" id="setono_sylius_scheduler.repository.job" />
+        </service>
+
+        <service id="setono_sylius_scheduler.fixture.schedule"
+                 class="Setono\SyliusSchedulerPlugin\Fixture\ScheduleFixture">
+            <argument type="service" id="setono_sylius_scheduler.manager.schedule" />
+            <argument type="service" id="setono_sylius_scheduler.fixture.example_factory.schedule" />
+
+            <tag name="sylius_fixtures.fixture" />
+        </service>
+
+        <!-- Job -->
         <service id="setono_sylius_scheduler.fixture.example_factory.job"
                  class="Setono\SyliusSchedulerPlugin\Fixture\Factory\JobExampleFactory">
 
+            <argument type="service" id="setono_sylius_scheduler.repository.schedule" />
             <argument type="service" id="setono_sylius_scheduler.factory.job" />
             <argument type="service" id="setono_sylius_scheduler.repository.job" />
         </service>

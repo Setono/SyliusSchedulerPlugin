@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace Setono\SyliusSchedulerPlugin\Fixture\Factory;
 
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Doctrine\ORM\ScheduleRepository;
 use Setono\SyliusSchedulerPlugin\Factory\JobFactory;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\AbstractExampleFactory;
+use Sylius\Bundle\CoreBundle\Fixture\OptionsResolver\LazyOption;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class JobExampleFactory extends AbstractExampleFactory
 {
+    /**
+     * @var ScheduleRepository
+     */
+    private $scheduleRepository;
+
     /**
      * @var JobFactory
      */
@@ -34,13 +41,16 @@ class JobExampleFactory extends AbstractExampleFactory
     private $optionsResolver;
 
     /**
+     * @param ScheduleRepository $scheduleRepository
      * @param JobFactory $jobFactory
      * @param JobRepository $jobRepository
      */
     public function __construct(
+        ScheduleRepository $scheduleRepository,
         JobFactory $jobFactory,
         JobRepository $jobRepository
     ) {
+        $this->scheduleRepository = $scheduleRepository;
         $this->jobFactory = $jobFactory;
         $this->jobRepository = $jobRepository;
 
@@ -53,12 +63,16 @@ class JobExampleFactory extends AbstractExampleFactory
     /**
      * {@inheritdoc}
      */
-    public function create(array $options = []): jobInterface
+    public function create(array $options = []): JobInterface
     {
         $options = $this->optionsResolver->resolve($options);
 
         /** @var JobInterface $job */
         $job = $this->jobFactory->createNew();
+
+        if (isset($options['schedule'])) {
+            $job->setSchedule($options['schedule']);
+        }
         $job->setCommand($options['command']);
 
         if (isset($options['args'])) {
@@ -131,6 +145,10 @@ class JobExampleFactory extends AbstractExampleFactory
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
+            ->setDefined('schedule')
+            ->setNormalizer('schedule', LazyOption::findOneBy($this->scheduleRepository, 'code'))
+            ->setAllowedTypes('schedule', ['null', 'string'])
+
             ->setDefined('command')
             ->setAllowedTypes('command', 'string')
 

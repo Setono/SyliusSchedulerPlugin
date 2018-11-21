@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass name="Setono\SyliusSchedulerPlugin\Model\Schedule" table="setono_sylius_scheduler_schedule">
+        <indexes>
+            <index name="command_search_idx" columns="command" />
+        </indexes>
+
+        <id name="id" type="integer">
+            <generator strategy="AUTO" />
+            <options>
+                <option name="unsigned">1</option>
+            </options>
+        </id>
+        <field name="code" type="string" />
+        <field name="name" type="string" nullable="true" />
+        <field name="command" type="string" />
+        <field name="args" type="json_array" />
+        <field name="queue" type="string" length="50" />
+        <field name="priority" type="smallint" />
+        <field name="cronExpression" column="cron_expression" type="string" />
+        <field name="createdAt" column="created_at" type="datetime" />
+
+        <one-to-many field="jobs" target-entity="Setono\SyliusSchedulerPlugin\Model\JobInterface" mapped-by="schedule" orphan-removal="true">
+            <cascade>
+                <cascade-all />
+            </cascade>
+            <order-by>
+                <order-by-field name="id" direction="DESC" />
+            </order-by>
+        </one-to-many>
+    </mapped-superclass>
+
+</doctrine-mapping>
