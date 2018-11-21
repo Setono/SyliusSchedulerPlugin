@@ -8,6 +8,7 @@
         <import resource="services/admin.xml"/>
         <import resource="services/commands.xml"/>
         <import resource="services/factories.xml"/>
+        <import resource="services/fixtures.xml"/>
         <import resource="services/form_types.xml"/>
     </imports>
 

@@ -290,9 +290,25 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
+    public function setCreatedAt(?\DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setClosedAt(?\DateTime $closedAt): void
+    {
+        $this->closedAt = $closedAt;
     }
 
     /**
@@ -469,6 +485,14 @@ class Job implements JobInterface
     public function getMaxRuntime(): int
     {
         return $this->maxRuntime;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStartedAt(?\DateTime $startedAt): void
+    {
+        $this->startedAt = $startedAt;
     }
 
     /**

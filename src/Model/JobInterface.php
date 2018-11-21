@@ -119,9 +119,19 @@ interface JobInterface extends ResourceInterface
     public function isStartable(): bool;
 
     /**
+     * @param \DateTime|null $createdAt
+     */
+    public function setCreatedAt(?\DateTime $createdAt): void;
+
+    /**
      * @return \DateTime|null
      */
     public function getCreatedAt(): ?\DateTime;
+
+    /**
+     * @param \DateTime|null $closedAt
+     */
+    public function setClosedAt(?\DateTime $closedAt): void;
 
     /**
      * @return \DateTime|null
@@ -229,6 +239,11 @@ interface JobInterface extends ResourceInterface
      * @return int
      */
     public function getMaxRuntime(): int;
+
+    /**
+     * @param \DateTime|null $startedAt
+     */
+    public function setStartedAt(?\DateTime $startedAt): void;
 
     /**
      * @return \DateTime|null

@@ -1,0 +1,19 @@
+sylius_fixtures:
+    suites:
+        default:
+            fixtures:
+                setono_scheduler_job:
+                    options:
+                        random: 2
+                        prototype:
+                            command: 'echo'
+                            args:
+                                - 'hi'
+                        custom:
+                            job_oauth_clean:
+                                command: 'fos:oauth-server:clean'
+                            job_echo_time:
+                                command: 'echo'
+                                args:
+                                    - '$(date +"%T")'
+                                execute_after: '+1 day'
