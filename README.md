@@ -28,13 +28,13 @@ Send follow up emails to your customers to entice them to leave feedback for you
     ];
     ```
 
-* Import config
+* Import config:
 
     ```yaml
     # config/packages/_sylius.yaml
     imports:
         # ...
-        - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/app/config.yml" }
+        - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/app/config.yaml" }
     ```
 
 * Import routes:
