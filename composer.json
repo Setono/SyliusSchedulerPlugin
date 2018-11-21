@@ -37,6 +37,9 @@
         "symfony/web-profiler-bundle": "^3.4|^4.1",
         "symfony/web-server-bundle": "^3.4|^4.1"
     },
+    "suggest": {
+        "ext-pcntl": "Allows signal handlers"
+    },
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
