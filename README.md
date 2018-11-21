@@ -7,6 +7,8 @@
 
 Sylius plugin to schedule jobs at admin panel and track their status.
 
+![Admin screenshot][image-admin-screenshot]
+
 ## Installation
 
 * Install plugin using `composer`:
@@ -130,6 +132,8 @@ or follow next steps manually:
 ## Pushing changes & making PRs
 
 Please run `composer all` to run all checks and tests before making PR or pushing changes to repo.
+
+[image-admin-screenshot]: docs/images/admin.png 
 
 [ico-version]: https://img.shields.io/packagist/v/setono/sylius-scheduler-plugin.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
