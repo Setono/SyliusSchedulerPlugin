@@ -37,7 +37,16 @@ Send follow up emails to your customers to entice them to leave feedback for you
         - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/app/config.yml" }
     ```
 
-* Update your schema (for existing project)
+* Import routes:
+
+    ```yaml
+    # config/routes.yaml
+    setono_sylius_scheduler_admin:
+        resource: "@SetonoSyliusSchedulerPlugin/Resources/config/admin_routing.yaml"
+        prefix: /admin
+    ```
+
+* Update your schema (for existing project):
 
     ```bash
     # Generate and edit migration
