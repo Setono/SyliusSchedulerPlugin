@@ -139,9 +139,9 @@ interface JobInterface extends ResourceInterface
     public function setExecuteAfter(?\DateTime $executeAfter): void;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCommand(): string;
+    public function getCommand(): ?string;
 
     /**
      * @param string $command

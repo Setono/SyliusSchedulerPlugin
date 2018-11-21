@@ -17,14 +17,14 @@ class Job implements JobInterface
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $command;
 
     /**
      * @var array
      */
-    private $args;
+    private $args = [];
 
     /**
      * @var string
@@ -322,7 +322,7 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function getCommand(): string
+    public function getCommand(): ?string
     {
         return $this->command;
     }

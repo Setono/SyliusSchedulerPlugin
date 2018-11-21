@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace Setono\SyliusSchedulerPlugin\DependencyInjection;
 
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Form\Type\JobType;
 use Setono\SyliusSchedulerPlugin\Model\Job;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
@@ -99,7 +100,8 @@ final class Configuration implements ConfigurationInterface
                                         ->scalarNode('interface')->defaultValue(JobInterface::class)->cannotBeEmpty()->end()
                                         ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
                                         ->scalarNode('repository')->defaultValue(JobRepository::class)->cannotBeEmpty()->end()
-                                        ->scalarNode('factory')->defaultValue(Factory::class)->end()
+                                        ->scalarNode('factory')->defaultValue(Factory::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('form')->defaultValue(JobType::class)->cannotBeEmpty()->end()
                                     ->end()
                                 ->end()
                             ->end()

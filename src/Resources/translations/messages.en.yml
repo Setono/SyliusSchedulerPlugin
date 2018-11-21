@@ -1,0 +1,31 @@
+setono_sylius_scheduler:
+    ui:
+        jobs: Scheduler jobs
+        new_job: New job
+        edit_job: Edit job
+        manage_jobs: Manage jobs
+
+        # Index
+        queue: Queue
+        command: Command
+        state: State
+        created_at: Created at
+        execute_after: Execute after
+        closed_at: Closed at
+        retry_jobs: Retry jobs
+
+    form:
+        job:
+            command: Command
+            args:
+                label: Args
+                add_arg: Add argument
+            queue: Queue
+            priority: Priority
+            execute_after: Execute after
+
+    menu:
+        admin:
+            main:
+                configuration:
+                    jobs: Scheduler jobs

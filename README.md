@@ -15,7 +15,7 @@ Send follow up emails to your customers to entice them to leave feedback for you
     $ composer require setono/sylius-scheduler-plugin
     ```
 
-* Add bundle to `config/bundles.php`:
+* Add bundle to `config/bundles.php` before (!) `SyliusResourceBundle`:
 
     ```php
     <?php
@@ -24,7 +24,27 @@ Send follow up emails to your customers to entice them to leave feedback for you
     return [
         // ...
         Setono\SyliusSchedulerPlugin\SetonoSyliusSchedulerPlugin::class => ['all' => true],
+        Sylius\Bundle\ResourceBundle\SyliusResourceBundle::class => ['all' => true],
     ];
+    ```
+
+* Import config
+
+    ```yaml
+    # config/packages/_sylius.yaml
+    imports:
+        # ...
+        - { resource: "@SetonoSyliusSchedulerPlugin/Resources/config/app/config.yml" }
+    ```
+
+* Update your schema (for existing project)
+
+    ```bash
+    # Generate and edit migration
+    bin/console doctrine:migrations:diff
+
+    # Then apply migration
+    bin/console doctrine:migrations:migrate
     ```
 
 ## Plugin configuration

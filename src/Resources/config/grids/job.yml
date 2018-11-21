@@ -1,0 +1,60 @@
+sylius_grid:
+    grids:
+        setono_sylius_scheduler_admin_job:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: "%setono_sylius_scheduler.model.job.class%"
+            sorting:
+                priority: desc
+            fields:
+                queue:
+                    type: string
+                    label: setono_sylius_scheduler.ui.queue
+                    sortable: ~
+                command:
+                    type: twig
+                    label: setono_sylius_scheduler.ui.command
+                    path: .
+                    sortable: ~
+                    options:
+                        template: "@SetonoSyliusSchedulerPlugin/Grid/Field/commandAndArgs.html.twig"
+                state:
+                    type: twig
+                    label: setono_sylius_scheduler.ui.state
+                    sortable: ~
+                    options:
+                        template: "@SetonoSyliusSchedulerPlugin/Grid/Field/state.html.twig"
+                priority:
+                    type: twig
+                    label: sylius.ui.priority
+                    sortable: ~
+                    options:
+                        template: "@SyliusUi/Grid/Field/position.html.twig"
+                createdAt:
+                    type: datetime
+                    label: setono_sylius_scheduler.ui.created_at
+                    sortable: ~
+                executeAfter:
+                    type: datetime
+                    label: setono_sylius_scheduler.ui.execute_after
+                    sortable: ~
+                closedAt:
+                    type: datetime
+                    label: setono_sylius_scheduler.ui.closed_at
+                    sortable: ~
+                retryJobs:
+                    type: twig
+                    label: setono_sylius_scheduler.ui.retry_jobs
+                    sortable: ~
+                    options:
+                        template: "@SetonoSyliusSchedulerPlugin/Grid/Field/retryJobsCount.html.twig"
+            actions:
+                main:
+                    create:
+                        type: create
+                item:
+                    update:
+                        type: update
+                    delete:
+                        type: delete

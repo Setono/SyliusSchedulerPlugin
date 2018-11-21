@@ -1,0 +1,5 @@
+<strong>{{ data.command }}</strong>
+
+{% if data.args is not empty %}
+    {{ data.args|join(' ') }}
+{% endif %}
