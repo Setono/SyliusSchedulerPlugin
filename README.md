@@ -70,6 +70,10 @@ To automatically execute installation steps, load fixtures
 and run server with just one command, run:
 
 ```bash
+# Optional step, if 5 mins enough for webserver to try
+# @see https://getcomposer.org/doc/06-config.md#process-timeout
+composer config --global process-timeout 0
+
 composer try
 ```
 
