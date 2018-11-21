@@ -5,7 +5,7 @@
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-code-quality]][link-code-quality]
 
-Send follow up emails to your customers to entice them to leave feedback for you. The plugin uses Schedulers [AFS service](https://support.scheduler.com/hc/en-us/articles/213703667-Automatic-Feedback-Service-AFS-2-0-setup-guide).
+Sylius plugin to schedule jobs at admin panel and track their status.
 
 ## Installation
 
