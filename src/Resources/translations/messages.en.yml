@@ -1,6 +1,6 @@
 setono_sylius_scheduler:
     ui:
-        jobs: Scheduler jobs
+        jobs: Jobs
         new_job: New job
         edit_job: Edit job
         manage_jobs: Manage jobs
@@ -22,7 +22,6 @@ setono_sylius_scheduler:
         # Index
         code: Code
         name: Name
-        cron_expression: Cron expression
 
     form:
         job:

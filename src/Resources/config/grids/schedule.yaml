@@ -9,17 +9,12 @@ sylius_grid:
                 priority: desc
             fields:
                 code:
-                    type: string
+                    type: twig
                     label: setono_sylius_scheduler.ui.code
+                    path: .
                     sortable: ~
-                name:
-                    type: string
-                    label: setono_sylius_scheduler.ui.name
-                    sortable: ~
-                queue:
-                    type: string
-                    label: setono_sylius_scheduler.ui.queue
-                    sortable: ~
+                    options:
+                        template: "@SetonoSyliusSchedulerPlugin/Grid/Field/codeAndName.html.twig"
                 command:
                     type: twig
                     label: setono_sylius_scheduler.ui.command
@@ -27,16 +22,16 @@ sylius_grid:
                     sortable: ~
                     options:
                         template: "@SetonoSyliusSchedulerPlugin/Grid/Field/commandAndArgs.html.twig"
+                queue:
+                    type: string
+                    label: setono_sylius_scheduler.ui.queue
+                    sortable: ~
                 priority:
                     type: twig
                     label: sylius.ui.priority
                     sortable: ~
                     options:
                         template: "@SyliusUi/Grid/Field/position.html.twig"
-                cronExpression:
-                    type: string
-                    label: setono_sylius_scheduler.ui.cron_expression
-                    sortable: ~
                 createdAt:
                     type: datetime
                     label: setono_sylius_scheduler.ui.created_at
