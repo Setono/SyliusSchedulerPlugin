@@ -1,21 +1,23 @@
 <div class="ui two column stackable grid">
     <div class="column">
         {{ form_errors(form) }}
-        <div class="ui segment">
-            <div class="two fields">
-                {{ form_row(form.command) }}
+        <div class="ui two column grid segment">
+            <div class="column">
+                {{ form_row(form.code) }}
+                {{ form_row(form.name) }}
             </div>
-            {{ form_row(form.args) }}
+            <div class="column">
+                {{ form_row(form.command) }}
+                {{ form_row(form.args) }}
+            </div>
         </div>
     </div>
     <div class="column">
         <div class="ui two column stackable grid">
             <div class="column">
+                {{ form_row(form.cronExpression) }}
                 {{ form_row(form.queue) }}
                 {{ form_row(form.priority) }}
-            </div>
-            <div class="column">
-                {{ form_row(form.cronExpression) }}
             </div>
         </div>
     </div>
