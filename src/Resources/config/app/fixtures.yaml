@@ -10,6 +10,11 @@ sylius_fixtures:
                                 name: 'Clean oauth every 2 minutes'
                                 command: 'fos:oauth-server:clean'
                                 cron_expression: '*/2 * * * *'
+                            schedule_cache_clean:
+                                code: 'schedule_cache_clean'
+                                name: 'Clean cache every day'
+                                command: 'cache:clean'
+                                cron_expression: '@daily'
                 setono_scheduler_job:
                     options:
                         random: 2
