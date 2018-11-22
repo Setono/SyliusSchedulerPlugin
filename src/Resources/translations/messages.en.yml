@@ -22,6 +22,7 @@ setono_sylius_scheduler:
         # Index
         code: Code
         name: Name
+        next_run_at: Next run at
 
     form:
         job:
