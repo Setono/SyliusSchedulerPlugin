@@ -21,7 +21,8 @@ final class ScheduleType extends AbstractResourceType
         $builder
             ->addEventSubscriber(new AddCodeFormSubscriber())
             ->add('name', TextType::class, [
-                'label' => 'setono_sylius_scheduler.form.schedule.command',
+                'label' => 'setono_sylius_scheduler.form.schedule.name',
+                'required' => false,
             ])
             ->add('command', TextType::class, [
                 'label' => 'setono_sylius_scheduler.form.schedule.command',
@@ -37,15 +38,12 @@ final class ScheduleType extends AbstractResourceType
             ])
             ->add('queue', TextType::class, [
                 'label' => 'setono_sylius_scheduler.form.schedule.queue',
-                'required' => false,
             ])
             ->add('priority', IntegerType::class, [
                 'label' => 'setono_sylius_scheduler.form.schedule.priority',
-                'required' => false,
             ])
             ->add('cronExpression', TextType::class, [
                 'label' => 'setono_sylius_scheduler.form.schedule.cron_expression',
-                'required' => false,
             ])
         ;
     }

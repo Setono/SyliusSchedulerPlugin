@@ -33,17 +33,14 @@ final class JobType extends AbstractResourceType
             ])
             ->add('queue', TextType::class, [
                 'label' => 'setono_sylius_scheduler.form.job.queue',
-                'required' => false,
             ])
             ->add('priority', IntegerType::class, [
                 'label' => 'setono_sylius_scheduler.form.job.priority',
-                'required' => false,
             ])
             ->add('executeAfter', DateTimeType::class, [
                 'label' => 'setono_sylius_scheduler.form.job.execute_after',
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'required' => false,
             ])
         ;
     }
