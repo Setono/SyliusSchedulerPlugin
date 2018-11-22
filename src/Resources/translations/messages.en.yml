@@ -26,6 +26,9 @@ setono_sylius_scheduler:
 
     form:
         job:
+            schedule:
+                label: Schedule
+                placeholder: "[ No schedule ]"
             command: Command
             args:
                 label: Args

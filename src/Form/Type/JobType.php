@@ -19,6 +19,11 @@ final class JobType extends AbstractResourceType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('schedule', ScheduleChoiceType::class, [
+                'label' => 'setono_sylius_scheduler.form.job.schedule.label',
+                'required' => false,
+                'placeholder' => 'setono_sylius_scheduler.form.job.schedule.placeholder',
+            ])
             ->add('command', TextType::class, [
                 'label' => 'setono_sylius_scheduler.form.job.command',
             ])

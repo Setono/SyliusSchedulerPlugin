@@ -24,6 +24,13 @@
             <tag name="form.type" />
         </service>
 
+        <service id="setono_sylius_scheduler.form.type.schedule_choice"
+                 class="Setono\SyliusSchedulerPlugin\Form\Type\ScheduleChoiceType">
+            <argument type="service" id="setono_sylius_scheduler.repository.schedule" />
+
+            <tag name="form.type" />
+        </service>
+
         <service id="setono_sylius_scheduler.form.type.job"
                  class="Setono\SyliusSchedulerPlugin\Form\Type\JobType">
             <argument>%setono_sylius_scheduler.model.job.class%</argument>
