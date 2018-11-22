@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusSchedulerPlugin\Model;
 
+use Cron\CronExpression;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -75,6 +76,40 @@ class Schedule implements ScheduleInterface
             $this->id,
             $this->command
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isNextJobShouldBeCreated($currentTime = 'now'): bool
+    {
+        return $this->getNextRunDate($currentTime)->getTimestamp() > $this->getLatestJobTimestamp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNextRunDate($currentTime = 'now'): \DateTime
+    {
+        return CronExpression::factory($this->cronExpression)->getNextRunDate($currentTime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLatestJobTimestamp(): int
+    {
+        $latestJob = $this->getLatestJob();
+        if (!$latestJob instanceof JobInterface) {
+            return 0;
+        }
+
+        $executeAfter = $latestJob->getExecuteAfter();
+        if (!$executeAfter instanceof \DateTime) {
+            return 0;
+        }
+
+        return $executeAfter->getTimestamp();
     }
 
     /**
@@ -230,7 +265,7 @@ class Schedule implements ScheduleInterface
      */
     public function addJob(JobInterface $job): void
     {
-        if (!$this->jobs->contains($job)) {
+        if (!$this->hasJob($job)) {
             $this->jobs->add($job);
         }
     }
@@ -241,5 +276,31 @@ class Schedule implements ScheduleInterface
     public function getJobs(): Collection
     {
         return $this->jobs;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasJob(JobInterface $job): bool
+    {
+        return $this->jobs->contains($job);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasJobs(): bool
+    {
+        return !$this->jobs->isEmpty();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeJob(JobInterface $job): void
+    {
+        if ($this->hasJob($job)) {
+            $this->jobs->removeElement($job);
+        }
     }
 }

@@ -7,12 +7,22 @@
     <services>
         <defaults public="false" />
 
+        <service id="setono_sylius_scheduler.command.schedule"
+                 class="Setono\SyliusSchedulerPlugin\Command\ScheduleJobCommand">
+            <argument type="service" id="setono_sylius_scheduler.custom_factory.job" />
+            <argument type="service" id="setono_sylius_scheduler.repository.job" />
+            <argument type="service" id="setono_sylius_scheduler.repository.schedule" />
+
+            <tag name="console.command" />
+        </service>
+
         <service id="setono_sylius_scheduler.command.run"
                  class="Setono\SyliusSchedulerPlugin\Command\RunCommand">
             <argument type="service" id="setono_sylius_scheduler.job_manager" />
             <argument type="service" id="setono_sylius_scheduler.repository.job" />
             <argument type="service" id="setono_sylius_scheduler.manager.job" />
             <argument type="service" id="event_dispatcher" />
+
             <tag name="console.command" />
         </service>
 
@@ -21,6 +31,7 @@
             <argument type="service" id="setono_sylius_scheduler.job_manager" />
             <argument type="service" id="setono_sylius_scheduler.repository.job" />
             <argument type="service" id="setono_sylius_scheduler.manager.job" />
+
             <tag name="console.command" />
         </service>
 
@@ -28,7 +39,9 @@
                  class="Setono\SyliusSchedulerPlugin\Command\MarkJobIncompleteCommand">
             <argument type="service" id="setono_sylius_scheduler.job_manager" />
             <argument type="service" id="setono_sylius_scheduler.repository.job" />
+
             <tag name="console.command" />
         </service>
+
     </services>
 </container>

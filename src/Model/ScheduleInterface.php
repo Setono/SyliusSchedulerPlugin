@@ -18,6 +18,20 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function __toString();
 
     /**
+     * @param string|\DateTime $currentTime
+     *
+     * @return bool
+     */
+    public function isNextJobShouldBeCreated($currentTime = 'now'): bool;
+
+    /**
+     * @param string|\DateTime $currentTime
+     *
+     * @return \DateTime
+     */
+    public function getNextRunDate($currentTime = 'now'): \DateTime;
+
+    /**
      * @return string|null
      */
     public function getName(): ?string;
@@ -98,7 +112,24 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function addJob(JobInterface $job): void;
 
     /**
+     * @param JobInterface $job
+     *
+     * @return bool
+     */
+    public function hasJob(JobInterface $job): bool;
+
+    /**
      * @return Collection|JobInterface[]
      */
     public function getJobs(): Collection;
+
+    /**
+     * @return bool
+     */
+    public function hasJobs(): bool;
+
+    /**
+     * @param JobInterface $job
+     */
+    public function removeJob(JobInterface $job): void;
 }
