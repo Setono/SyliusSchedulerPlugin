@@ -17,7 +17,7 @@ class Job implements JobInterface
     private $id;
 
     /**
-     * @var ScheduleInterface
+     * @var ScheduleInterface|null
      */
     private $schedule;
 
@@ -314,7 +314,7 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function setCreatedAt(?\DateTime $createdAt): void
+    public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
@@ -322,7 +322,7 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }

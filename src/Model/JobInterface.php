@@ -79,12 +79,12 @@ interface JobInterface extends ResourceInterface
     public function __toString();
 
     /**
-     * @return null|ScheduleInterface
+     * @return ScheduleInterface|null
      */
     public function getSchedule(): ?ScheduleInterface;
 
     /**
-     * @param null|ScheduleInterface $schedule
+     * @param ScheduleInterface|null $schedule
      */
     public function setSchedule(?ScheduleInterface $schedule): void;
 
@@ -129,14 +129,14 @@ interface JobInterface extends ResourceInterface
     public function isStartable(): bool;
 
     /**
-     * @param \DateTime|null $createdAt
+     * @param \DateTime $createdAt
      */
-    public function setCreatedAt(?\DateTime $createdAt): void;
+    public function setCreatedAt(\DateTime $createdAt): void;
 
     /**
-     * @return \DateTime|null
+     * @return \DateTime
      */
-    public function getCreatedAt(): ?\DateTime;
+    public function getCreatedAt(): \DateTime;
 
     /**
      * @param \DateTime|null $closedAt
@@ -189,6 +189,8 @@ interface JobInterface extends ResourceInterface
     public function getDependencies(): Collection;
 
     /**
+     * @noinspection PhpDocSignatureInspection
+     *
      * @param self $job
      *
      * @return bool
@@ -196,6 +198,8 @@ interface JobInterface extends ResourceInterface
     public function hasDependency(self $job): bool;
 
     /**
+     * @noinspection PhpDocSignatureInspection
+     *
      * @param self $job
      */
     public function addDependency(self $job): void;
@@ -281,11 +285,15 @@ interface JobInterface extends ResourceInterface
     public function getOriginalJob(): self;
 
     /**
+     * @noinspection PhpDocSignatureInspection
+     *
      * @param self $job
      */
     public function setOriginalJob(self $job): void;
 
     /**
+     * @noinspection PhpDocSignatureInspection
+     *
      * @param self $job
      */
     public function addRetryJob(self $job): void;

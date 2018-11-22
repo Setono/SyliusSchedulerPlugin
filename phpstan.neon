@@ -20,3 +20,5 @@ parameters:
     ignoreErrors:
         - '/Parameter #1 $configuration of method Symfony\Component\DependencyInjection\Extension\Extension::processConfiguration() expects Symfony\Component\Config\Definition\ConfigurationInterface, Symfony\Component\Config\Definition\ConfigurationInterface|null given./'
         - '/Cannot cast array<string>\|bool\|string\|null to .+/'
+        - '/Anonymous function should return string but returns array\|string\./'
+        - '/Cannot call method scalarNode\(\) on .+\\NodeParentInterface\|null\./'

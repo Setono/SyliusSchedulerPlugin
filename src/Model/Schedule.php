@@ -15,7 +15,7 @@ class Schedule implements ScheduleInterface
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $code;
 
@@ -212,7 +212,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function setCreatedAt(?\DateTime $createdAt): void
+    public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
@@ -220,7 +220,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
@@ -242,5 +242,4 @@ class Schedule implements ScheduleInterface
     {
         return $this->jobs;
     }
-
 }

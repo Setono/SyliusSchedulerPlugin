@@ -18,22 +18,22 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function __toString();
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getName(): ?string;
 
     /**
-     * @param null|string $name
+     * @param string|null $name
      */
     public function setName(?string $name): void;
 
     /**
-     * @return null|JobInterface
+     * @return JobInterface|null
      */
     public function getLatestJob(): ?JobInterface;
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getCommand(): ?string;
 
@@ -83,14 +83,14 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function setCronExpression(string $cronExpression): void;
 
     /**
-     * @param \DateTime|null $createdAt
+     * @param \DateTime $createdAt
      */
-    public function setCreatedAt(?\DateTime $createdAt): void;
+    public function setCreatedAt(\DateTime $createdAt): void;
 
     /**
-     * @return \DateTime|null
+     * @return \DateTime
      */
-    public function getCreatedAt(): ?\DateTime;
+    public function getCreatedAt(): \DateTime;
 
     /**
      * @param JobInterface $job
