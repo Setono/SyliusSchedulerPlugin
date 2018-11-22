@@ -10,6 +10,7 @@
         <import resource="services/factories.xml"/>
         <import resource="services/fixtures.xml"/>
         <import resource="services/form_types.xml"/>
+        <import resource="services/twig_extensions.xml"/>
     </imports>
 
     <services>
