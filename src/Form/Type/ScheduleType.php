@@ -30,6 +30,7 @@ final class ScheduleType extends AbstractResourceType
                 'label' => 'setono_sylius_scheduler.form.schedule.args.label',
                 'entry_type' => TextType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
                 'by_reference' => false,
                 'button_add_label' => 'setono_sylius_scheduler.form.schedule.args.add_arg',
                 'required' => false,

@@ -26,6 +26,7 @@ final class JobType extends AbstractResourceType
                 'label' => 'setono_sylius_scheduler.form.job.args.label',
                 'entry_type' => TextType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
                 'by_reference' => false,
                 'button_add_label' => 'setono_sylius_scheduler.form.job.args.add_arg',
                 'required' => false,
