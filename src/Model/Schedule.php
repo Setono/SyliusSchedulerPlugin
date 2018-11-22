@@ -91,7 +91,11 @@ class Schedule implements ScheduleInterface
      */
     public function getNextRunDate($currentTime = 'now'): \DateTime
     {
-        return CronExpression::factory($this->cronExpression)->getNextRunDate($currentTime);
+        $cronExpression = CronExpression::factory($this->cronExpression);
+        $nextRunDate = $cronExpression->getNextRunDate($currentTime);
+        unset($cronExpression);
+
+        return $nextRunDate;
     }
 
     /**
