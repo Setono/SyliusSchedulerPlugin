@@ -171,8 +171,8 @@ class JobRepository extends EntityRepository implements JobRepositoryInterface
     {
         $affectedRows = $this->_em->getConnection()->executeUpdate(
             sprintf(
-                'UPDATE %s SET workerName = :worker WHERE id = :id AND workerName IS NULL',
-                $this->getEntityName()
+                'UPDATE %s SET worker_name = :worker WHERE id = :id AND worker_name IS NULL',
+                $this->_em->getClassMetadata($this->getClassName())->getTableName()
             ),
             [
                 'worker' => $workerName,
