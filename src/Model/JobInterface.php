@@ -94,9 +94,9 @@ interface JobInterface extends ResourceInterface
     public function getState(): string;
 
     /**
-     * @param string $newState
+     * @param string $state
      */
-    public function setState(string $newState): void;
+    public function setState(string $state): void;
 
     /**
      * @param string|null $workerName
@@ -302,6 +302,26 @@ interface JobInterface extends ResourceInterface
      * @return ArrayCollection|self[]
      */
     public function getRetryJobs(): Collection;
+
+    /**
+     * @noinspection PhpDocSignatureInspection
+     *
+     * @param self $job
+     * @return bool
+     */
+    public function hasRetryJob(self $job): bool;
+
+    /**
+     * @return bool
+     */
+    public function hasRetryJobs(): bool;
+
+    /**
+     * @noinspection PhpDocSignatureInspection
+     *
+     * @param self $job
+     */
+    public function removeRetryJob(self $job): void;
 
     /**
      * @return bool

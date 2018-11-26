@@ -6,8 +6,6 @@ namespace Setono\SyliusSchedulerPlugin\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Setono\SyliusSchedulerPlugin\Exception\InvalidStateTransitionException;
-use Setono\SyliusSchedulerPlugin\Exception\LogicException;
 
 class Job implements JobInterface
 {
@@ -261,54 +259,9 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function setState(string $newState): void
+    public function setState(string $state): void
     {
-        if ($newState === $this->state) {
-            return;
-        }
-
-        switch ($this->state) {
-            case self::STATE_NEW:
-                if (!\in_array($newState, [self::STATE_PENDING, self::STATE_CANCELED], true)) {
-                    throw new InvalidStateTransitionException($this, $newState, [self::STATE_PENDING, self::STATE_CANCELED]);
-                }
-
-                if (self::STATE_CANCELED === $newState) {
-                    $this->closedAt = new \DateTime();
-                }
-
-                break;
-            case self::STATE_PENDING:
-                if (!\in_array($newState, [self::STATE_RUNNING, self::STATE_CANCELED], true)) {
-                    throw new InvalidStateTransitionException($this, $newState, [self::STATE_RUNNING, self::STATE_CANCELED]);
-                }
-
-                if ($newState === self::STATE_RUNNING) {
-                    $this->startedAt = new \DateTime();
-                    $this->checkedAt = new \DateTime();
-                } elseif ($newState === self::STATE_CANCELED) {
-                    $this->closedAt = new \DateTime();
-                }
-
-                break;
-            case self::STATE_RUNNING:
-                if (!\in_array($newState, [self::STATE_FINISHED, self::STATE_FAILED, self::STATE_TERMINATED, self::STATE_INCOMPLETE], true)) {
-                    throw new InvalidStateTransitionException($this, $newState, [self::STATE_FINISHED, self::STATE_FAILED, self::STATE_TERMINATED, self::STATE_INCOMPLETE]);
-                }
-
-                $this->closedAt = new \DateTime();
-
-                break;
-            case self::STATE_FINISHED:
-            case self::STATE_FAILED:
-            case self::STATE_TERMINATED:
-            case self::STATE_INCOMPLETE:
-                throw new InvalidStateTransitionException($this, $newState);
-            default:
-                throw new LogicException('The previous cases were exhaustive. Unknown state: ' . $this->state);
-        }
-
-        $this->state = $newState;
+        $this->state = $state;
     }
 
     /**
@@ -574,14 +527,6 @@ class Job implements JobInterface
      */
     public function setOriginalJob(JobInterface $job): void
     {
-        if (self::STATE_PENDING !== $this->state) {
-            throw new \LogicException($this . ' must be in state "PENDING".');
-        }
-
-        if (null !== $this->originalJob) {
-            throw new \LogicException($this . ' already has an original job set.');
-        }
-
         $this->originalJob = $job;
     }
 
@@ -590,12 +535,10 @@ class Job implements JobInterface
      */
     public function addRetryJob(JobInterface $job): void
     {
-        if (self::STATE_RUNNING !== $this->state) {
-            throw new \LogicException('Retry jobs can only be added to running jobs.');
+        if (!$this->hasRetryJob($job)) {
+            $job->setOriginalJob($this);
+            $this->retryJobs->add($job);
         }
-
-        $job->setOriginalJob($this);
-        $this->retryJobs->add($job);
     }
 
     /**
@@ -604,6 +547,32 @@ class Job implements JobInterface
     public function getRetryJobs(): Collection
     {
         return $this->retryJobs;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasRetryJob(JobInterface $job): bool
+    {
+        return $this->retryJobs->contains($job);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasRetryJobs(): bool
+    {
+        return !$this->retryJobs->isEmpty();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeRetryJob(JobInterface $job): void
+    {
+        if ($this->hasRetryJob($job)) {
+            $this->retryJobs->removeElement($job);
+        }
     }
 
     /**
