@@ -42,6 +42,8 @@ final class JobFixture extends AbstractResourceFixture
                                 $value,
                                 implode(', ', Job::getStates())
                             ));
+
+                            return $value;
                         })
                     ->end()
                     ->cannotBeEmpty()
@@ -89,24 +91,7 @@ final class JobFixture extends AbstractResourceFixture
 //                        })
 //                    ->end()
 //                ->end()
-//                ->arrayNode('retry_jobs')
-//                    ->requiresAtLeastOneElement()
-//                    ->defaultValue([])
-//                    ->treatNullLike([])
-//                    ->beforeNormalization()
-//                        ->ifTrue(function ($values){
-//                            return !empty($values);
-//                        })
-//                        ->then(function(){
-//                            throw new NotImplementedException(sprintf(
-//                                'Providing "retry_jobs" at %s fixture not yet implemented',
-//                                $this->getName()
-//                            ));
-//                        })
-//                    ->end()
-//                    ->beforeNormalization()->castToArray()->end()
-//                    ->scalarPrototype()->cannotBeEmpty()->end()
-//                ->end()
+                ->scalarNode('retry_jobs')->cannotBeEmpty()->end()
             ->end()
         ;
     }

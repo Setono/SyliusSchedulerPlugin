@@ -27,6 +27,7 @@ sylius_fixtures:
                                 schedule: 'schedule_oauth_clean'
                                 command: 'fos:oauth-server:clean'
                                 execute_after: '+2 minute'
+                                retry_jobs: 2
                             job_echo_time:
                                 command: 'echo'
                                 args:

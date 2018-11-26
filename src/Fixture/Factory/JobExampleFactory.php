@@ -130,11 +130,14 @@ class JobExampleFactory extends AbstractExampleFactory
 //        if (isset($options['original_job'])) {
 //            $job->setOriginalJob($options['original_job']);
 //        }
-//
-//        /** @var JobInterface $retryJob */
-//        foreach ($options['retry_jobs'] as $retryJob) {
-//            $job->addRetryJob($retryJob);
-//        }
+
+        if (isset($options['retry_jobs']) && is_int($options['retry_jobs'])) {
+            /** @var JobInterface $retryJob */
+            for ($i = 0; $i < $options['retry_jobs']; $i++) {
+                $retryJob = $this->jobFactory->createRetryJob($job);
+                $job->addRetryJob($retryJob);
+            }
+        }
 
         return $job;
     }
@@ -211,10 +214,12 @@ class JobExampleFactory extends AbstractExampleFactory
 //            // @todo Decide how to identify
 //            ->setNormalizer('retry_jobs', LazyOption::findOneBy($this->jobRepository, '...'))
 //            ->setAllowedTypes('original_job', ['null', 'object'])
-//
-//            // @todo Decide how to identify
-//            ->setNormalizer('retry_jobs', LazyOption::findBy($this->jobRepository, '...'))
-//            ->setAllowedTypes('retry_jobs', 'array')
+
+            ->setDefined('retry_jobs')
+            ->setNormalizer('retry_jobs', function($options){
+                return $this->faker->numberBetween(0, 4);
+            })
+            ->setAllowedTypes('retry_jobs', 'int')
         ;
     }
 }
