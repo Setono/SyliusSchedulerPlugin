@@ -48,6 +48,22 @@ class JobFactory implements JobFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function createRetryJob(JobInterface $job): JobInterface
+    {
+        /** @var JobInterface $retryJob */
+        $retryJob = $this->createNew();
+        $retryJob->setState(JobInterface::STATE_PENDING);
+        $retryJob->setOriginalJob($job);
+        $retryJob->setSchedule($job->getSchedule());
+        $retryJob->setCommand($job->getCommand());
+        $retryJob->setArgs($job->getArgs());
+
+        return $retryJob;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function createFromSchedule(ScheduleInterface $schedule): JobInterface
     {
         /** @var JobInterface $job */

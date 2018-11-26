@@ -19,6 +19,13 @@ interface JobFactoryInterface extends FactoryInterface
     public function createForCommand(string $command, array $args = []): JobInterface;
 
     /**
+     * @param JobInterface $job
+     *
+     * @return JobInterface
+     */
+    public function createRetryJob(JobInterface $job): JobInterface;
+
+    /**
      * @param ScheduleInterface $schedule
      *
      * @return JobInterface
