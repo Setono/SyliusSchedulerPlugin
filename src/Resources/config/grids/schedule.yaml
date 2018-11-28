@@ -1,4 +1,7 @@
 sylius_grid:
+    templates:
+        action:
+            jobs_list: "@SetonoSyliusSchedulerPlugin/Grid/Action/jobs_list.html.twig"
     grids:
         setono_sylius_scheduler_admin_schedule:
             driver:
