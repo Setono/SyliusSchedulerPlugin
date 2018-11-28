@@ -1,28 +1,43 @@
 setono_sylius_scheduler:
     ui:
+        # Grid actions
+        action:
+            jobs_list: Jobs list
+            retry_jobs_list: List retry jobs
+
+        # Job
         jobs: Jobs
         new_job: New job
         edit_job: Edit job
         manage_jobs: Manage jobs
+        retry_jobs: Retry jobs
 
-        # Index
-        queue: Queue
-        command: Command
+        # Job fields
+        worker_name: Worker name
         state: State
         created_at: Created at
         execute_after: Execute after
         closed_at: Closed at
-        retry_jobs: Retry jobs
+        exit_code: Exit code
+        output: Output
+        error_output: Error output
 
+        # Schedule
         schedules: Schedules
         new_schedule: New schedule
         edit_schedule: Edit schedule
         manage_schedules: Manage schedules
 
-        # Index
+        # Schedule fields
         code: Code
         name: Name
         next_run_at: Next run at
+
+        # Job/Schedule common fields
+        queue: Queue
+        priority: Priority
+        command: Command
+        args: Arguments
 
     form:
         schedule:
