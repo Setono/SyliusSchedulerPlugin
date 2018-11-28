@@ -26,13 +26,6 @@ setono_sylius_scheduler_admin_schedule:
                 form: "@SetonoSyliusSchedulerPlugin/Admin/Schedule/_form.html.twig"
   type: sylius.resource
 
-# Routes (listed for better navigation):
-# - setono_sylius_scheduler_admin_job_index
-# - setono_sylius_scheduler_admin_job_create
-# - setono_sylius_scheduler_admin_job_update
-# - setono_sylius_scheduler_admin_job_bulk_delete
-# - setono_sylius_scheduler_admin_job_delete
-
 setono_sylius_scheduler_admin_job:
   resource: |
     alias: setono_sylius_scheduler.job
@@ -45,11 +38,6 @@ setono_sylius_scheduler_admin_job:
     vars:
         all:
             subheader: setono_sylius_scheduler.ui.manage_jobs
-            templates:
-                form: "@SetonoSyliusSchedulerPlugin/Admin/Job/_form.html.twig"
         index:
             icon: tasks
-        update:
-            templates:
-                form: "@SetonoSyliusSchedulerPlugin/Admin/Job/_form.html.twig"
   type: sylius.resource

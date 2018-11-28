@@ -8,9 +8,6 @@
         <parameter key="setono_sylius_scheduler.form.type.schedule.validation_groups" type="collection">
             <parameter>setono_sylius_scheduler</parameter>
         </parameter>
-        <parameter key="setono_sylius_scheduler.form.type.job.validation_groups" type="collection">
-            <parameter>setono_sylius_scheduler</parameter>
-        </parameter>
     </parameters>
 
     <services>
@@ -27,14 +24,6 @@
         <service id="setono_sylius_scheduler.form.type.schedule_choice"
                  class="Setono\SyliusSchedulerPlugin\Form\Type\ScheduleChoiceType">
             <argument type="service" id="setono_sylius_scheduler.repository.schedule" />
-
-            <tag name="form.type" />
-        </service>
-
-        <service id="setono_sylius_scheduler.form.type.job"
-                 class="Setono\SyliusSchedulerPlugin\Form\Type\JobType">
-            <argument>%setono_sylius_scheduler.model.job.class%</argument>
-            <argument>%setono_sylius_scheduler.form.type.job.validation_groups%</argument>
 
             <tag name="form.type" />
         </service>

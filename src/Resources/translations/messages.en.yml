@@ -25,17 +25,6 @@ setono_sylius_scheduler:
         next_run_at: Next run at
 
     form:
-        job:
-            schedule:
-                label: Schedule
-                placeholder: "[ No schedule ]"
-            command: Command
-            args:
-                label: Args
-                add_arg: Add argument
-            queue: Queue
-            priority: Priority
-            execute_after: Execute after
         schedule:
             code: Code
             name: Name
@@ -51,5 +40,4 @@ setono_sylius_scheduler:
         admin:
             main:
                 configuration:
-                    jobs: Scheduler jobs
                     schedules: Schedules
