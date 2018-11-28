@@ -11,6 +11,16 @@ sylius_grid:
             sorting:
                 priority: desc
             fields:
+                priority:
+                    type: twig
+                    label: sylius.ui.priority
+                    sortable: ~
+                    options:
+                        template: "@SyliusUi/Grid/Field/position.html.twig"
+                queue:
+                    type: string
+                    label: setono_sylius_scheduler.ui.queue
+                    sortable: ~
                 code:
                     type: twig
                     label: setono_sylius_scheduler.ui.code
@@ -25,16 +35,6 @@ sylius_grid:
                     sortable: ~
                     options:
                         template: "@SetonoSyliusSchedulerPlugin/Grid/Field/commandAndArgs.html.twig"
-                queue:
-                    type: string
-                    label: setono_sylius_scheduler.ui.queue
-                    sortable: ~
-                priority:
-                    type: twig
-                    label: sylius.ui.priority
-                    sortable: ~
-                    options:
-                        template: "@SyliusUi/Grid/Field/position.html.twig"
                 createdAt:
                     type: datetime
                     label: setono_sylius_scheduler.ui.created_at
@@ -61,3 +61,14 @@ sylius_grid:
                         type: update
                     delete:
                         type: delete
+                subitem:
+                    jobs_list:
+                        type: jobs_list
+                        label: setono_sylius_scheduler.ui.action.jobs_list
+                        options:
+                            visible: resource.hasJobs
+                            icon: tasks
+                            link:
+                                route: setono_sylius_scheduler_admin_job_index
+                                parameters:
+                                    scheduleId: resource.id

@@ -16,6 +16,7 @@ setono_sylius_scheduler_admin_schedule:
     permission: true
     vars:
         all:
+            header: setono_sylius_scheduler.ui.schedules
             subheader: setono_sylius_scheduler.ui.manage_schedules
             templates:
                 form: "@SetonoSyliusSchedulerPlugin/Admin/Schedule/_form.html.twig"
@@ -26,18 +27,73 @@ setono_sylius_scheduler_admin_schedule:
                 form: "@SetonoSyliusSchedulerPlugin/Admin/Schedule/_form.html.twig"
   type: sylius.resource
 
-setono_sylius_scheduler_admin_job:
-  resource: |
-    alias: setono_sylius_scheduler.job
-    section: admin
-    templates: SyliusAdminBundle:Crud
-    except: ['show']
-    redirect: update
-    grid: setono_sylius_scheduler_admin_job
-    permission: true
-    vars:
-        all:
-            subheader: setono_sylius_scheduler.ui.manage_jobs
-        index:
-            icon: tasks
-  type: sylius.resource
+setono_sylius_scheduler_admin_job_index:
+    path: /schedules/{scheduleId}/jobs/
+    methods: [GET]
+    defaults:
+        _controller: setono_sylius_scheduler.controller.job:indexAction
+        _sylius:
+            grid: setono_sylius_scheduler_admin_job
+            section: admin
+            permission: true
+            template: "@SyliusAdmin/Crud/index.html.twig"
+            vars:
+                route:
+                    parameters:
+                        scheduleId: $scheduleId
+                templates:
+                    breadcrumb: "@SetonoSyliusSchedulerPlugin/Admin/Job/Index/_breadcrumb.html.twig"
+                # Not sure this is best solution to pass Schedule to _breadcrumb.html.twig
+                schedule: expr:service('setono_sylius_scheduler.repository.schedule').find($scheduleId)
+
+setono_sylius_scheduler_admin_job_show:
+    path: /schedules/{scheduleId}/jobs/{id}
+    methods: [GET]
+    defaults:
+        _controller: setono_sylius_scheduler.controller.job:showAction
+        _sylius:
+            grid: setono_sylius_scheduler_admin_job
+            section: admin
+            permission: true
+            template: "@SetonoSyliusSchedulerPlugin/Admin/Job/show.html.twig"
+            repository:
+                method: findOneByIdAndScheduleId
+                arguments:
+                    id: $id
+                    scheduleId: $scheduleId
+
+setono_sylius_scheduler_admin_job_delete:
+    path: /schedules/{scheduleId}/jobs/{id}
+    methods: [DELETE]
+    defaults:
+        _controller: setono_sylius_scheduler.controller.job:deleteAction
+        _sylius:
+            grid: setono_sylius_scheduler_admin_job
+            section: admin
+            permission: true
+            redirect:
+                route: setono_sylius_scheduler_admin_job_index
+                parameters:
+                    scheduleId: $scheduleId
+
+setono_sylius_scheduler_admin_job_retries_index:
+    path: /schedules/{scheduleId}/jobs/{id}/retries/
+    methods: [GET]
+    defaults:
+        _controller: setono_sylius_scheduler.controller.job:indexAction
+        _sylius:
+            grid: setono_sylius_scheduler_admin_job_retries
+            section: admin
+            permission: true
+            template: "@SyliusAdmin/Crud/index.html.twig"
+            vars:
+                route:
+                    parameters:
+                        id: $id
+                        scheduleId: $scheduleId
+                templates:
+                    breadcrumb: "@SetonoSyliusSchedulerPlugin/Admin/Job/Retries/Index/_breadcrumb.html.twig"
+                # Not sure this is best solution to pass Schedule to _breadcrumb.html.twig
+                job: expr:service('setono_sylius_scheduler.repository.job').find($id)
+                schedule: expr:service('setono_sylius_scheduler.repository.schedule').find($scheduleId)
+
