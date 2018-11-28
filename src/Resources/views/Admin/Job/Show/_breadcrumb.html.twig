@@ -1,0 +1,12 @@
+{% import '@SyliusAdmin/Macro/breadcrumb.html.twig' as breadcrumb %}
+
+{% set breadcrumbs = [
+    { label: 'sylius.ui.administration'|trans, url: path('sylius_admin_dashboard') },
+    { label: 'setono_sylius_scheduler.ui.schedules'|trans, url: path('setono_sylius_scheduler_admin_schedule_index') },
+    { label: resource.schedule.code, url: path('setono_sylius_scheduler_admin_schedule_update', {'id': resource.schedule.id}) },
+    { label: 'setono_sylius_scheduler.ui.jobs'|trans, url: path(configuration.getRouteName('index'), {'scheduleId': resource.schedule.id}) },
+    { label: resource.id }
+]
+%}
+
+{{ breadcrumb.crumble(breadcrumbs) }}

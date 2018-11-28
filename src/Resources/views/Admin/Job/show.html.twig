@@ -1,0 +1,20 @@
+{% extends '@SyliusAdmin/layout.html.twig' %}
+
+{% set event_prefix = metadata.applicationName ~ '.admin.' ~ metadata.name ~ '.show' %}
+
+{% block title %}
+    {{ job.command }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {{ sonata_block_render_event(event_prefix ~ '.before_header', {'resource': resource}) }}
+    {% include '@SetonoSyliusSchedulerPlugin/Admin/Job/Show/_header.html.twig' %}
+    {{ sonata_block_render_event(event_prefix ~ '.after_header', {'resource': resource}) }}
+
+    {{ sonata_block_render_event(event_prefix ~ '.before_content', {'resource': resource}) }}
+    <div class="ui stackable grid">
+        {% include '@SetonoSyliusSchedulerPlugin/Admin/Job/Show/_content.html.twig' %}
+    </div>
+    {{ sonata_block_render_event(event_prefix ~ '.after_content', {'resource': resource}) }}
+{% endblock %}

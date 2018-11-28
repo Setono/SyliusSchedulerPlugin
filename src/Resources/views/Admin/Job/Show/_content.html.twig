@@ -1,0 +1,99 @@
+<div class="eight wide column">
+    <div class="ui fluid card">
+
+        <div class="content">
+
+            <div>
+                <label>{{ 'setono_sylius_scheduler.ui.worker_name'|trans }}</label>:
+                <strong>
+                    {{ resource.workerName }}
+                </strong>
+            </div>
+
+            <div>
+                <label>{{ 'setono_sylius_scheduler.ui.exit_code'|trans }}</label>:
+                <strong>
+                    {{ resource.exitCode }}
+                </strong>
+            </div>
+
+        </div>
+
+        {% if resource.errorOutput %}
+            <div class="extra content">
+                <h3>
+                    {{ 'setono_sylius_scheduler.ui.error_output'|trans }}
+                </h3>
+                <code>
+                    {{ resource.errorOutput }}
+                </code>
+            </div>
+        {% endif %}
+
+        <div class="extra content">
+            <h3>
+                {{ 'setono_sylius_scheduler.ui.output'|trans }}
+            </h3>
+            <code>
+                {{ resource.output }}
+            </code>
+        </div>
+
+    </div>
+</div>
+
+<div class="eight wide column">
+    <div class="ui fluid card">
+
+        <div class="content">
+
+            <div>
+                <label>{{ 'setono_sylius_scheduler.ui.queue'|trans }}</label>:
+                <strong>
+                    {{ resource.queue }}
+                </strong>
+            </div>
+
+            <div>
+                <label>{{ 'setono_sylius_scheduler.ui.priority'|trans }}</label>:
+                <strong>
+                    {{ resource.priority }}
+                </strong>
+            </div>
+
+            <div>
+                <label>{{ 'setono_sylius_scheduler.ui.state'|trans }}</label>:
+                <strong>
+                    {{ resource.state }}
+                </strong>
+            </div>
+
+            <div class="meta">
+
+                <div class="date">
+                    <label>{{ 'setono_sylius_scheduler.ui.created_at'|trans }}</label>:
+                    <strong>
+                        {{ resource.createdAt|date('Y-m-d H:i:s') }}
+                    </strong>
+                </div>
+
+                <div class="date">
+                    <label>{{ 'setono_sylius_scheduler.ui.closed_at'|trans }}</label>:
+                    <strong>
+                        {{ resource.closedAt|date('Y-m-d H:i:s') }}
+                    </strong>
+                </div>
+
+                <div class="date">
+                    <label>{{ 'setono_sylius_scheduler.ui.execute_after'|trans }}</label>:
+                    <strong>
+                        {{ resource.executeAfter|date('Y-m-d H:i:s') }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

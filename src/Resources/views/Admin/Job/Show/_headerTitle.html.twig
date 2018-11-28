@@ -1,0 +1,7 @@
+{% import '@SyliusUi/Macro/headers.html.twig' as headers %}
+
+{{ headers.default(
+    job.command ~ ' ' ~ job.args|join(' '),
+    configuration.vars.icon|default('list'),
+    job.schedule.name|default(job.schedule.code)
+) }}
