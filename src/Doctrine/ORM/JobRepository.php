@@ -6,12 +6,54 @@ namespace Setono\SyliusSchedulerPlugin\Doctrine\ORM;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\QueryBuilder;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class JobRepository extends EntityRepository implements JobRepositoryInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function findOneByIdAndScheduleId(string $id, string $scheduleId): ?JobInterface
+    {
+        return $this->createQueryBuilder('j')
+            ->leftJoin('j.schedule', 'schedule')
+            ->andWhere('j.id = :id')
+            ->andWhere('schedule.id = :scheduleId')
+            ->setParameter('id', $id)
+            ->setParameter('scheduleId', $scheduleId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createQueryBuilderByScheduleId(string $scheduleId): QueryBuilder
+    {
+        return $this->createQueryBuilder('j')
+            ->innerJoin('j.schedule', 'schedule')
+            ->andWhere('j.originalJob IS NULL')
+            ->andWhere('schedule.id = :scheduleId')
+            ->setParameter('scheduleId', $scheduleId)
+            ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createQueryBuilderByOriginalJobId(string $originalJobId): QueryBuilder
+    {
+        return $this->createQueryBuilder('j')
+            ->innerJoin('j.schedule', 'schedule')
+            ->andWhere('j.originalJob = :originalJobId')
+            ->setParameter('originalJobId', $originalJobId)
+            ;
+    }
+
     /**
      * {@inheritdoc}
      */

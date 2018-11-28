@@ -4,11 +4,31 @@ declare(strict_types=1);
 
 namespace Setono\SyliusSchedulerPlugin\Doctrine\ORM;
 
+use Doctrine\ORM\QueryBuilder;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 interface JobRepositoryInterface extends RepositoryInterface
 {
+    /**
+     * @param string $id
+     * @param string $scheduleId
+     * @return null|JobInterface
+     */
+    public function findOneByIdAndScheduleId(string $id, string $scheduleId): ?JobInterface;
+
+    /**
+     * @param string $scheduleId
+     * @return QueryBuilder
+     */
+    public function createQueryBuilderByScheduleId(string $scheduleId): QueryBuilder;
+
+    /**
+     * @param string $originalJobId
+     * @return QueryBuilder
+     */
+    public function createQueryBuilderByOriginalJobId(string $originalJobId): QueryBuilder;
+
     /**
      * @param string $command
      * @param array $args
