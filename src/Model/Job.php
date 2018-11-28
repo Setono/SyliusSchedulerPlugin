@@ -6,6 +6,7 @@ namespace Setono\SyliusSchedulerPlugin\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Setono\SyliusSchedulerPlugin\Exception\LogicException;
 
 class Job implements JobInterface
 {
@@ -261,6 +262,40 @@ class Job implements JobInterface
      */
     public function setState(string $state): void
     {
+        if ($state === $this->state) {
+            return;
+        }
+
+        switch ($this->state) {
+            case self::STATE_NEW:
+                if (self::STATE_CANCELED === $state) {
+                    $this->closedAt = new \DateTime();
+                }
+                break;
+
+            case self::STATE_PENDING:
+                if ($state === self::STATE_RUNNING) {
+                    $this->startedAt = new \DateTime();
+                    $this->checkedAt = new \DateTime();
+                } else if ($state === self::STATE_CANCELED) {
+                    $this->closedAt = new \DateTime();
+                }
+                break;
+
+            case self::STATE_RUNNING:
+                $this->closedAt = new \DateTime();
+                break;
+
+            case self::STATE_FINISHED:
+            case self::STATE_FAILED:
+            case self::STATE_TERMINATED:
+            case self::STATE_INCOMPLETE:
+                break;
+
+            default:
+                throw new LogicException('The previous cases were exhaustive. Unknown state: '.$this->state);
+        }
+
         $this->state = $state;
     }
 
