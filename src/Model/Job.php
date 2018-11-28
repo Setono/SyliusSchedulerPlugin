@@ -101,6 +101,11 @@ class Job implements JobInterface
     private $maxRuntime = 0;
 
     /**
+     * @var ?int
+     */
+    private $runtime;
+
+    /**
      * @var int
      */
     private $maxRetries = 0;
@@ -497,6 +502,22 @@ class Job implements JobInterface
     public function getMaxRuntime(): int
     {
         return $this->maxRuntime;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRuntime(): ?int
+    {
+        return $this->runtime;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRuntime(?int $runtime): void
+    {
+        $this->runtime = $runtime;
     }
 
     /**

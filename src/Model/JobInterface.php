@@ -255,6 +255,16 @@ interface JobInterface extends ResourceInterface
     public function getMaxRuntime(): int;
 
     /**
+     * @return int|null
+     */
+    public function getRuntime(): ?int;
+
+    /**
+     * @param int|null $runtime
+     */
+    public function setRuntime(?int $runtime): void;
+
+    /**
      * @param \DateTime|null $startedAt
      */
     public function setStartedAt(?\DateTime $startedAt): void;
