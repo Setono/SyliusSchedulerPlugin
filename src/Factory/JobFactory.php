@@ -35,19 +35,6 @@ class JobFactory implements JobFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createForCommand(string $command, array $args = []): JobInterface
-    {
-        /** @var JobInterface $job */
-        $job = $this->createNew();
-        $job->setCommand($command);
-        $job->setArgs($args);
-
-        return $job;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function createRetryJob(JobInterface $job): JobInterface
     {
         /** @var JobInterface $retryJob */
