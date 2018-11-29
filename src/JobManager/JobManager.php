@@ -189,14 +189,7 @@ class JobManager
 
                 // The original job has failed, and we are allowed to retry it.
                 if ($job->isRetryAllowed()) {
-                    $retryJob = $this->jobFactory->createForCommand(
-                        $job->getCommand(),
-                        $job->getArgs()
-                    );
-                    $retryJob->setState(JobInterface::STATE_PENDING);
-                    $retryJob->setQueue($job->getQueue());
-                    $retryJob->setPriority($job->getPriority());
-                    $retryJob->setMaxRuntime($job->getMaxRuntime());
+                    $retryJob = $this->jobFactory->createRetryJob($job);
                     $retryJob->setExecuteAfter(
                         $this->retryScheduler->scheduleNextRetry($job)
                     );

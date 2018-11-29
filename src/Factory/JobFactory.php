@@ -58,6 +58,12 @@ class JobFactory implements JobFactoryInterface
         $retryJob->setCommand($job->getCommand());
         $retryJob->setArgs($job->getArgs());
 
+        $retryJob->setQueue($job->getQueue());
+        $retryJob->setPriority($job->getPriority());
+        $retryJob->setWorkerName($job->getWorkerName());
+
+        $retryJob->setMaxRuntime($job->getMaxRuntime());
+
         return $retryJob;
     }
 
