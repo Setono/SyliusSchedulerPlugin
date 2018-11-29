@@ -14,22 +14,4 @@ sylius_fixtures:
                                 code: 'schedule_cache_clean'
                                 name: 'Clean cache every day'
                                 command: 'cache:clean'
-                                cron_expression: '@daily'
-                setono_scheduler_job:
-                    options:
-                        random: 2
-                        prototype:
-                            command: 'echo'
-                            args:
-                                - 'hi'
-                        custom:
-                            job_oauth_clean:
-                                schedule: 'schedule_oauth_clean'
-                                command: 'fos:oauth-server:clean'
-                                execute_after: '+2 minute'
-                                retry_jobs: 2
-                            job_echo_time:
-                                command: 'echo'
-                                args:
-                                    - '$(date +"%T")'
-                                execute_after: '+1 day'
+                                cron_expression: '0 0 * * *'

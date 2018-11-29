@@ -7,6 +7,7 @@ namespace Setono\SyliusSchedulerPlugin\Model;
 use Cron\CronExpression;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 
 class Schedule implements ScheduleInterface
 {
@@ -60,10 +61,26 @@ class Schedule implements ScheduleInterface
      */
     private $jobs;
 
+    /**
+     * @var CronExpression
+     */
+    private $cronExpressionParsed;
+
     public function __construct()
     {
         $this->jobs = new ArrayCollection();
         $this->createdAt = new \DateTime();
+        $this->initializeCronExpressionParsed();
+    }
+
+    private function initializeCronExpressionParsed(): void
+    {
+        $this->cronExpressionParsed = CronExpression::factory($this->cronExpression);
+    }
+
+    public function onPostLoad(): void
+    {
+        $this->initializeCronExpressionParsed();
     }
 
     /**
@@ -83,7 +100,7 @@ class Schedule implements ScheduleInterface
      */
     public function isNextJobShouldBeCreated($currentTime = 'now'): bool
     {
-        return $this->getNextRunDate($currentTime)->getTimestamp() > $this->getLatestJobTimestamp();
+        return $this->getNextRunDate($currentTime)->getTimestamp() > $this->getJobWithGreatestExecuteAfterTimestamp();
     }
 
     /**
@@ -91,19 +108,15 @@ class Schedule implements ScheduleInterface
      */
     public function getNextRunDate($currentTime = 'now'): \DateTime
     {
-        $cronExpression = CronExpression::factory($this->cronExpression);
-        $nextRunDate = $cronExpression->getNextRunDate($currentTime);
-        unset($cronExpression);
-
-        return $nextRunDate;
+        return $this->cronExpressionParsed->getNextRunDate($currentTime);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getLatestJobTimestamp(): int
+    protected function getJobWithGreatestExecuteAfterTimestamp(): int
     {
-        $latestJob = $this->getLatestJob();
+        $latestJob = $this->getJobWithGreatestExecuteAfter();
         if (!$latestJob instanceof JobInterface) {
             return 0;
         }
@@ -119,13 +132,17 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function getLatestJob(): ?JobInterface
+    public function getJobWithGreatestExecuteAfter(): ?JobInterface
     {
         if ($this->jobs->isEmpty()) {
             return null;
         }
 
-        return $this->jobs->last();
+        $criteria = Criteria::create()->orderBy([
+            'executeAfter' => Criteria::ASC,
+        ]);
+
+        return $this->jobs->matching($criteria)->last();
     }
 
     /**
@@ -246,6 +263,7 @@ class Schedule implements ScheduleInterface
     public function setCronExpression(string $cronExpression): void
     {
         $this->cronExpression = $cronExpression;
+        $this->cronExpressionParsed->setExpression($this->cronExpression);
     }
 
     /**

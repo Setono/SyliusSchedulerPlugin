@@ -57,14 +57,14 @@ class JobFactory implements JobFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createFromSchedule(ScheduleInterface $schedule): JobInterface
+    public function createFromSchedule(ScheduleInterface $schedule, $currentTime = 'now'): JobInterface
     {
         /** @var JobInterface $job */
         $job = $this->createNew();
         $job->setSchedule($schedule);
         $job->setCommand($schedule->getCommand());
         $job->setArgs($schedule->getArgs());
-        $job->setExecuteAfter($schedule->getNextRunDate());
+        $job->setExecuteAfter($schedule->getNextRunDate($currentTime));
 
         return $job;
     }

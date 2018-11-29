@@ -19,8 +19,9 @@ interface JobFactoryInterface extends FactoryInterface
 
     /**
      * @param ScheduleInterface $schedule
+     * @param string|\DateTime $currentTime
      *
      * @return JobInterface
      */
-    public function createFromSchedule(ScheduleInterface $schedule): JobInterface;
+    public function createFromSchedule(ScheduleInterface $schedule, $currentTime = 'now'): JobInterface;
 }

@@ -42,11 +42,6 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function setName(?string $name): void;
 
     /**
-     * @return JobInterface|null
-     */
-    public function getLatestJob(): ?JobInterface;
-
-    /**
      * @return string|null
      */
     public function getCommand(): ?string;
@@ -122,6 +117,11 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
      * @return Collection|JobInterface[]
      */
     public function getJobs(): Collection;
+
+    /**
+     * @return JobInterface|null
+     */
+    public function getJobWithGreatestExecuteAfter(): ?JobInterface;
 
     /**
      * @return bool

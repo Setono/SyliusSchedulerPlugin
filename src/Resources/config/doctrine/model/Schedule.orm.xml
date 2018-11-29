@@ -33,6 +33,10 @@
                 <order-by-field name="id" direction="DESC" />
             </order-by>
         </one-to-many>
+
+        <lifecycle-callbacks>
+            <lifecycle-callback type="postLoad" method="onPostLoad" />
+        </lifecycle-callbacks>
     </mapped-superclass>
 
 </doctrine-mapping>
