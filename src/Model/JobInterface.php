@@ -290,16 +290,16 @@ interface JobInterface extends ResourceInterface
     public function isRetryAllowed(): bool;
 
     /**
-     * @return JobInterface
+     * @return self
      */
     public function getOriginalJob(): self;
 
     /**
      * @noinspection PhpDocSignatureInspection
      *
-     * @param self $job
+     * @param self|null $job
      */
-    public function setOriginalJob(self $job): void;
+    public function setOriginalJob(?self $job): void;
 
     /**
      * @noinspection PhpDocSignatureInspection

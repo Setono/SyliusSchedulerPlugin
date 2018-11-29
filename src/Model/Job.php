@@ -194,10 +194,11 @@ class Job implements JobInterface
      */
     public function setSchedule(?ScheduleInterface $schedule): void
     {
+        $this->schedule = $schedule;
+
         if ($schedule instanceof ScheduleInterface) {
             $schedule->addJob($this);
         }
-        $this->schedule = $schedule;
     }
 
     /**
@@ -581,9 +582,13 @@ class Job implements JobInterface
     /**
      * {@inheritdoc}
      */
-    public function setOriginalJob(JobInterface $job): void
+    public function setOriginalJob(?JobInterface $job): void
     {
         $this->originalJob = $job;
+
+        if ($job instanceof JobInterface) {
+            $job->addRetryJob($this);
+        }
     }
 
     /**
@@ -592,8 +597,11 @@ class Job implements JobInterface
     public function addRetryJob(JobInterface $job): void
     {
         if (!$this->hasRetryJob($job)) {
-            $job->setOriginalJob($this);
             $this->retryJobs->add($job);
+        }
+
+        if ($this !== $job->getOriginalJob()) {
+            $job->setOriginalJob($this);
         }
     }
 
@@ -627,6 +635,7 @@ class Job implements JobInterface
     public function removeRetryJob(JobInterface $job): void
     {
         if ($this->hasRetryJob($job)) {
+            $job->setOriginalJob(null);
             $this->retryJobs->removeElement($job);
         }
     }

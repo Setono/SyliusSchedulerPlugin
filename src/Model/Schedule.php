@@ -272,6 +272,10 @@ class Schedule implements ScheduleInterface
         if (!$this->hasJob($job)) {
             $this->jobs->add($job);
         }
+
+        if ($this !== $job->getSchedule()) {
+            $job->setSchedule($this);
+        }
     }
 
     /**
@@ -304,6 +308,7 @@ class Schedule implements ScheduleInterface
     public function removeJob(JobInterface $job): void
     {
         if ($this->hasJob($job)) {
+            $job->setSchedule(null);
             $this->jobs->removeElement($job);
         }
     }
