@@ -13,18 +13,21 @@ interface JobRepositoryInterface extends RepositoryInterface
     /**
      * @param string $id
      * @param string $scheduleId
-     * @return null|JobInterface
+     *
+     * @return JobInterface|null
      */
     public function findOneByIdAndScheduleId(string $id, string $scheduleId): ?JobInterface;
 
     /**
      * @param string $scheduleId
+     *
      * @return QueryBuilder
      */
     public function createQueryBuilderByScheduleId(string $scheduleId): QueryBuilder;
 
     /**
      * @param string $originalJobId
+     *
      * @return QueryBuilder
      */
     public function createQueryBuilderByOriginalJobId(string $originalJobId): QueryBuilder;

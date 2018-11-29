@@ -317,6 +317,7 @@ interface JobInterface extends ResourceInterface
      * @noinspection PhpDocSignatureInspection
      *
      * @param self $job
+     *
      * @return bool
      */
     public function hasRetryJob(self $job): bool;

@@ -139,7 +139,7 @@ class ScheduleSpec extends ObjectBehavior
         $this->hasJob($job)->shouldReturn(false);
     }
 
-    function it_has_created_initialized_at_by_default(): void
+    function it_has_created_at_initialized_by_default(): void
     {
         $this->getCreatedAt()->shouldNotReturn(null);
         $this->getCreatedAt()->shouldBeAnInstanceOf(\DateTime::class);

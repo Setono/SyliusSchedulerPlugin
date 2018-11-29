@@ -133,7 +133,7 @@ class JobExampleFactory extends AbstractExampleFactory
 
         if (isset($options['retry_jobs']) && is_int($options['retry_jobs'])) {
             /** @var JobInterface $retryJob */
-            for ($i = 0; $i < $options['retry_jobs']; $i++) {
+            for ($i = 0; $i < $options['retry_jobs']; ++$i) {
                 $retryJob = $this->jobFactory->createRetryJob($job);
                 $job->addRetryJob($retryJob);
             }
@@ -216,7 +216,7 @@ class JobExampleFactory extends AbstractExampleFactory
 //            ->setAllowedTypes('original_job', ['null', 'object'])
 
             ->setDefined('retry_jobs')
-            ->setNormalizer('retry_jobs', function($options){
+            ->setNormalizer('retry_jobs', function ($options) {
                 return $this->faker->numberBetween(0, 4);
             })
             ->setAllowedTypes('retry_jobs', 'int')
