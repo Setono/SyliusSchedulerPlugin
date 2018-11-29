@@ -7,6 +7,7 @@ namespace Setono\SyliusSchedulerPlugin\Command;
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepositoryInterface;
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\ScheduleRepositoryInterface;
 use Setono\SyliusSchedulerPlugin\Factory\JobFactoryInterface;
+use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -76,6 +77,7 @@ class ScheduleJobCommand extends ContainerAwareCommand
             }
 
             $job = $this->jobFactory->createFromSchedule($schedule);
+            $job->setState(JobInterface::STATE_PENDING);
             $this->jobRepository->add($job);
 
             $output->writeln(sprintf(
