@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Setono\SyliusSchedulerPlugin\JobManager;
 
 use Doctrine\ORM\EntityManager;
-use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepositoryInterface;
 use Setono\SyliusSchedulerPlugin\Event\StateChangeEvent;
-use Setono\SyliusSchedulerPlugin\Factory\JobFactory;
+use Setono\SyliusSchedulerPlugin\Factory\JobFactoryInterface;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\Retry\RetrySchedulerInterface;
 use Setono\SyliusSchedulerPlugin\SetonoSyliusSchedulerPluginEvent;
@@ -16,12 +16,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class JobManager
 {
     /**
-     * @var JobRepository
+     * @var JobRepositoryInterface
      */
     private $jobRepository;
 
     /**
-     * @var JobFactory
+     * @var JobFactoryInterface
      */
     private $jobFactory;
 
@@ -41,15 +41,15 @@ class JobManager
     private $retryScheduler;
 
     /**
-     * @param JobRepository $jobRepository
-     * @param JobFactory $jobFactory
+     * @param JobRepositoryInterface $jobRepository
+     * @param JobFactoryInterface $jobFactory
      * @param EntityManager $entityManager
      * @param EventDispatcherInterface $eventDispatcher
      * @param RetrySchedulerInterface $retryScheduler
      */
     public function __construct(
-        JobRepository $jobRepository,
-        JobFactory $jobFactory,
+        JobRepositoryInterface $jobRepository,
+        JobFactoryInterface $jobFactory,
         EntityManager $entityManager,
         EventDispatcherInterface $eventDispatcher,
         RetrySchedulerInterface $retryScheduler
