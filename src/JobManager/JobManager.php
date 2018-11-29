@@ -61,51 +61,6 @@ class JobManager
         $this->retryScheduler = $retryScheduler;
     }
 
-    public function getJob(string $command, array $args = []): ?JobInterface
-    {
-        if (null !== $job = $this->jobRepository->findOneByCommand($command, $args)) {
-            return $job;
-        }
-
-        throw new \RuntimeException(sprintf(
-            'Found no job for command "%s" with args "%s".',
-            $command,
-            json_encode($args)
-        ));
-    }
-
-    /**
-     * @todo Decide if we need it - it not used in any place
-     *
-     * @param string $command
-     * @param array $args
-     *
-     * @return JobInterface
-     */
-    public function getOrCreateIfNotExists(string $command, array $args = []): JobInterface
-    {
-        $job = $this->jobRepository->findOneByCommand($command, $args);
-        if ($job instanceof JobInterface) {
-            return $job;
-        }
-
-        $job = $this->jobFactory->createForCommand($command, $args);
-        $this->jobRepository->add($job);
-
-        /** @var JobInterface $firstJob */
-        $firstJob = $this->jobRepository->findFirstOneByCommand($command, $args);
-        if ($firstJob === $job) {
-            $job->setState(JobInterface::STATE_PENDING);
-            $this->jobRepository->add($job);
-
-            return $job;
-        }
-
-        $this->jobRepository->remove($job);
-
-        return $firstJob;
-    }
-
     /**
      * @param JobInterface $job
      * @param string $finalState
