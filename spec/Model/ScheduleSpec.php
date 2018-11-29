@@ -151,17 +151,34 @@ class ScheduleSpec extends ObjectBehavior
         $this->getCreatedAt()->shouldReturn($now);
     }
 
-    function its_latest_job_returns_null_by_default(): void
+    function greatest_execute_after_job_is_null_by_default(): void
     {
-        $this->getLatestJob()->shouldBeNull();
+        $this->getJobWithGreatestExecuteAfter()->shouldBeNull();
     }
 
-    function its_latest_job_returns_last_added_job(JobInterface $job1, JobInterface $job2): void
+    function greatest_execute_after_job_is_latest_for_default_execute_after(JobInterface $job1, JobInterface $job2): void
     {
         $this->addJob($job1);
         $this->addJob($job2);
-        $this->getLatestJob()->shouldNotBeEqualTo($job1);
-        $this->getLatestJob()->shouldBeEqualTo($job2);
+        $this->getJobWithGreatestExecuteAfter()->shouldNotBeEqualTo($job1);
+        $this->getJobWithGreatestExecuteAfter()->shouldBeEqualTo($job2);
+    }
+
+    function it_should_return_greatest_execute_after_job(JobInterface $job1, JobInterface $job2, \DateTime $dateTime): void
+    {
+        $dateTime->beConstructedWith(['now']);
+
+        $job1->getExecuteAfter()->willReturn($dateTime);
+        $job1->getSchedule()->willReturn(null);
+        $job1->setSchedule($this)->shouldBeCalled();
+        $this->addJob($job1);
+
+        $job2->getExecuteAfter()->willReturn(null);
+        $job2->getSchedule()->willReturn(null);
+        $job2->setSchedule($this)->shouldBeCalled();
+        $this->addJob($job2);
+
+        $this->getJobWithGreatestExecuteAfter()->shouldReturn($job1);
     }
 
     public function its_next_run_date_implements_date_time(): void
