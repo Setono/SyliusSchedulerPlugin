@@ -47,6 +47,7 @@ setono_sylius_scheduler:
             args:
                 label: Args
                 add_arg: Add argument
+                delete_arg: Remove argument
             queue: Queue
             priority: Priority
             cron_expression: Cron expression
