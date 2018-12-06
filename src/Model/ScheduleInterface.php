@@ -47,9 +47,9 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function getCommand(): ?string;
 
     /**
-     * @param string $command
+     * @param string|null $command
      */
-    public function setCommand(string $command): void;
+    public function setCommand(?string $command): void;
 
     /**
      * @return array

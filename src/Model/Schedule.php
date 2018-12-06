@@ -198,7 +198,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function setCommand(string $command): void
+    public function setCommand(?string $command): void
     {
         $this->command = $command;
     }
