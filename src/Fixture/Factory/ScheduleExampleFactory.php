@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\SyliusSchedulerPlugin\Fixture\Factory;
 
 use Setono\SyliusSchedulerPlugin\Doctrine\ORM\JobRepository;
+use Setono\SyliusSchedulerPlugin\Factory\ScheduleFactoryInterface;
 use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\Model\ScheduleInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\AbstractExampleFactory;
@@ -16,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ScheduleExampleFactory extends AbstractExampleFactory
 {
     /**
-     * @var Factory
+     * @var ScheduleFactoryInterface
      */
     private $scheduleFactory;
 
@@ -36,11 +37,11 @@ class ScheduleExampleFactory extends AbstractExampleFactory
     private $optionsResolver;
 
     /**
-     * @param Factory $scheduleFactory
+     * @param ScheduleFactoryInterface $scheduleFactory
      * @param JobRepository $scheduleRepository
      */
     public function __construct(
-        Factory $scheduleFactory,
+        ScheduleFactoryInterface $scheduleFactory,
         JobRepository $scheduleRepository
     ) {
         $this->scheduleFactory = $scheduleFactory;
