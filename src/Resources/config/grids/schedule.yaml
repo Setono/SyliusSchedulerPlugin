@@ -8,6 +8,8 @@ sylius_grid:
                 name: doctrine/orm
                 options:
                     class: "%setono_sylius_scheduler.model.schedule.class%"
+                    repository:
+                        method: createOrderedQueryBuilder
             sorting:
                 priority: desc
             fields:

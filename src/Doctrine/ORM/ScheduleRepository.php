@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\SyliusSchedulerPlugin\Doctrine\ORM;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 
 class ScheduleRepository extends EntityRepository implements ScheduleRepositoryInterface
@@ -12,12 +13,20 @@ class ScheduleRepository extends EntityRepository implements ScheduleRepositoryI
     /**
      * {@inheritdoc}
      */
-    public function findByQueues(array $restrictedQueues = []): array
+    public function createOrderedQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('s')
-            ->orderBy('s.priority', 'ASC')
+        return $this->createQueryBuilder('s')
+            ->addOrderBy('s.priority', 'DESC')
             ->addOrderBy('s.id', 'ASC')
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findByQueues(array $restrictedQueues = []): array
+    {
+        $queryBuilder = $this->createOrderedQueryBuilder();
 
         if (!empty($restrictedQueues)) {
             $queryBuilder
