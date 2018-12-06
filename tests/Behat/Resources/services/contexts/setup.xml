@@ -16,12 +16,12 @@
             <tag name="fob.context_service" />
         </service>
 
-        <service id="setono_sylius_scheduler.behat.context.setup.job"
-                 class="Tests\Setono\SyliusSchedulerPlugin\Behat\Context\Setup\JobContext">
-            <argument type="service" id="sylius.behat.shared_storage" />
-            <argument type="service" id="__symfony__.doctrine.orm.entity_manager" />
-            <tag name="fob.context_service" />
-        </service>
+        <!--<service id="setono_sylius_scheduler.behat.context.setup.job"-->
+                 <!--class="Tests\Setono\SyliusSchedulerPlugin\Behat\Context\Setup\JobContext">-->
+            <!--<argument type="service" id="sylius.behat.shared_storage" />-->
+            <!--<argument type="service" id="__symfony__.doctrine.orm.entity_manager" />-->
+            <!--<tag name="fob.context_service" />-->
+        <!--</service>-->
 
     </services>
 </container>
