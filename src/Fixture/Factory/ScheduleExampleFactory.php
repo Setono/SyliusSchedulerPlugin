@@ -10,7 +10,6 @@ use Setono\SyliusSchedulerPlugin\Model\JobInterface;
 use Setono\SyliusSchedulerPlugin\Model\ScheduleInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\AbstractExampleFactory;
 use Sylius\Component\Core\Formatter\StringInflector;
-use Sylius\Component\Resource\Factory\Factory;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

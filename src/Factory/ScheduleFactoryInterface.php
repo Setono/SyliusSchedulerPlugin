@@ -14,6 +14,7 @@ interface ScheduleFactoryInterface extends FactoryInterface
      * @param array $args
      * @param string|null $scheduleName
      * @param string|null $scheduleCode
+     *
      * @return ScheduleInterface
      */
     public function createForCommand(string $command, array $args = [], ?string $scheduleName = null, ?string $scheduleCode = null): ScheduleInterface;
