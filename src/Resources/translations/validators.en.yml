@@ -3,7 +3,7 @@ setono_sylius_scheduler:
         code:
             not_blank: Please enter schedule code.
             regex: Schedule code can only be comprised of letters, numbers, dashes and underscores.
-            unique: This schedule code already exists.
+            unique: The schedule with given code already exists.
         name:
             not_blank: Please enter schedule name.
             min_length: Schedule name must be at least {{ limit }} character long.|Schedule name must be at least {{ limit }} characters long.
