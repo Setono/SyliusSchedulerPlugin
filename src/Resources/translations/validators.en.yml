@@ -1,4 +1,27 @@
 setono_sylius_scheduler:
     schedule:
+        code:
+            not_blank: Please enter schedule code.
+            regex: Schedule code can only be comprised of letters, numbers, dashes and underscores.
+            unique: This schedule code already exists.
+        name:
+            not_blank: Please enter schedule name.
+            min_length: Schedule name must be at least {{ limit }} character long.|Schedule name must be at least {{ limit }} characters long.
+            max_length: Schedule name must not be longer than {{ limit }} character.|Schedule name must not be longer than {{ limit }} characters.
+        command:
+            not_blank: Please enter command.
+            min_length: Command must be at least {{ limit }} character long.|Command must be at least {{ limit }} characters long.
+            max_length: Command must not be longer than {{ limit }} character.|Command must not be longer than {{ limit }} characters.
+        arg:
+            not_blank: Please enter command argument.
+            min_length: Command argument must be at least {{ limit }} character long.|Command argument must be at least {{ limit }} characters long.
+        queue:
+            not_blank: Please enter queue name.
+            min_length: Queue name must be at least {{ limit }} character long.|Queue name must be at least {{ limit }} characters long.
+            max_length: Queue name must not be longer than {{ limit }} character.|Queue name must not be longer than {{ limit }} characters.
+        priority:
+            not_blank: Please enter priority.
+            is_numeric: Priority must be numeric.
         cron_expression:
+            not_blank: Please enter cron expression.
             valid: Cron expression should be valid.
