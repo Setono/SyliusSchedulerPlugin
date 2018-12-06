@@ -1,4 +1,4 @@
-@setono_sylius_scheduler @managing_schedules @current
+@setono_sylius_scheduler @managing_schedules
 Feature: Schedule validation
     In order to avoid making mistakes when managing a schedule
     As an Administrator
