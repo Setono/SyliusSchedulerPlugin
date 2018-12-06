@@ -1,11 +1,11 @@
 setono_sylius_scheduler:
     schedule:
         code:
-            not_blank: Please enter schedule code.
+            not_blank: Please enter code.
             regex: Schedule code can only be comprised of letters, numbers, dashes and underscores.
             unique: The schedule with given code already exists.
         name:
-            not_blank: Please enter schedule name.
+            not_blank: Please enter name.
             min_length: Schedule name must be at least {{ limit }} character long.|Schedule name must be at least {{ limit }} characters long.
             max_length: Schedule name must not be longer than {{ limit }} character.|Schedule name must not be longer than {{ limit }} characters.
         command:
@@ -13,10 +13,10 @@ setono_sylius_scheduler:
             min_length: Command must be at least {{ limit }} character long.|Command must be at least {{ limit }} characters long.
             max_length: Command must not be longer than {{ limit }} character.|Command must not be longer than {{ limit }} characters.
         arg:
-            not_blank: Please enter command argument.
+            not_blank: Please enter argument.
             min_length: Command argument must be at least {{ limit }} character long.|Command argument must be at least {{ limit }} characters long.
         queue:
-            not_blank: Please enter queue name.
+            not_blank: Please enter queue.
             min_length: Queue name must be at least {{ limit }} character long.|Queue name must be at least {{ limit }} characters long.
             max_length: Queue name must not be longer than {{ limit }} character.|Queue name must not be longer than {{ limit }} characters.
         priority:
