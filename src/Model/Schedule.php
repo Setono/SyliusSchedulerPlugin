@@ -238,7 +238,7 @@ class Schedule implements ScheduleInterface
      */
     public function setPriority(int $priority): void
     {
-        $this->priority = $priority * -1;
+        $this->priority = $priority;
     }
 
     /**
@@ -246,7 +246,7 @@ class Schedule implements ScheduleInterface
      */
     public function getPriority(): int
     {
-        return $this->priority * -1;
+        return $this->priority;
     }
 
     /**
