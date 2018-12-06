@@ -14,5 +14,12 @@
             <argument type="service" id="setono_sylius_scheduler.custom_factory.job.inner" />
         </service>
 
+        <service id="setono_sylius_scheduler.custom_factory.schedule"
+                 class="Setono\SyliusSchedulerPlugin\Factory\ScheduleFactory"
+                 decorates="setono_sylius_scheduler.factory.schedule"
+                 decoration-priority="256">
+            <argument type="service" id="setono_sylius_scheduler.custom_factory.schedule.inner" />
+        </service>
+
     </services>
 </container>
