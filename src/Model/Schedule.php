@@ -37,17 +37,17 @@ class Schedule implements ScheduleInterface
     private $args = [];
 
     /**
-     * @var string
+     * @var string|null
      */
     private $queue = JobInterface::DEFAULT_QUEUE;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $priority = JobInterface::PRIORITY_DEFAULT;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $cronExpression = self::DEFAULT_CRON_EXPRESSION;
 
@@ -75,7 +75,9 @@ class Schedule implements ScheduleInterface
 
     private function initializeCronExpressionParsed(): void
     {
-        $this->cronExpressionParsed = CronExpression::factory($this->cronExpression);
+        $this->cronExpressionParsed = CronExpression::factory(
+            CronExpression::isValidExpression($this->cronExpression) ? $this->cronExpression : self::DEFAULT_CRON_EXPRESSION
+        );
     }
 
     public function onPostLoad(): void
@@ -220,7 +222,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function setQueue(string $queue): void
+    public function setQueue(?string $queue): void
     {
         $this->queue = $queue;
     }
@@ -228,7 +230,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function getQueue(): string
+    public function getQueue(): ?string
     {
         return $this->queue;
     }
@@ -236,7 +238,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function setPriority(int $priority): void
+    public function setPriority(?int $priority): void
     {
         $this->priority = $priority;
     }
@@ -244,7 +246,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function getPriority(): int
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
@@ -252,7 +254,7 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function getCronExpression(): string
+    public function getCronExpression(): ?string
     {
         return $this->cronExpression;
     }
@@ -260,10 +262,12 @@ class Schedule implements ScheduleInterface
     /**
      * {@inheritdoc}
      */
-    public function setCronExpression(string $cronExpression): void
+    public function setCronExpression(?string $cronExpression): void
     {
         $this->cronExpression = $cronExpression;
-        $this->cronExpressionParsed->setExpression($this->cronExpression);
+        $this->cronExpressionParsed->setExpression(
+            CronExpression::isValidExpression($this->cronExpression) ? $this->cronExpression : self::DEFAULT_CRON_EXPRESSION
+        );
     }
 
     /**

@@ -62,34 +62,34 @@ interface ScheduleInterface extends ResourceInterface, CodeAwareInterface
     public function setArgs(array $args): void;
 
     /**
-     * @param string $queue
+     * @param string|null $queue
      */
-    public function setQueue(string $queue): void;
+    public function setQueue(?string $queue): void;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getQueue(): string;
+    public function getQueue(): ?string;
 
     /**
-     * @param int $priority
+     * @param int|null $priority
      */
-    public function setPriority(int $priority): void;
+    public function setPriority(?int $priority): void;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPriority(): int;
+    public function getPriority(): ?int;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCronExpression(): string;
+    public function getCronExpression(): ?string;
 
     /**
-     * @param string $cronExpression
+     * @param string|null $cronExpression
      */
-    public function setCronExpression(string $cronExpression): void;
+    public function setCronExpression(?string $cronExpression): void;
 
     /**
      * @param \DateTime $createdAt
