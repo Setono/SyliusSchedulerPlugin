@@ -1,0 +1,2 @@
+imports:
+    - suites/ui/admin/managing_schedules.yml

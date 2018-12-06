@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults public="true" />
+
+        <service id="setono_sylius_scheduler.behat.context.setup.schedule"
+                 class="Tests\Setono\SyliusSchedulerPlugin\Behat\Context\Setup\ScheduleContext">
+            <argument type="service" id="sylius.behat.shared_storage" />
+            <argument type="service" id="__symfony__.setono_sylius_scheduler.custom_factory.schedule" />
+            <argument type="service" id="__symfony__.setono_sylius_scheduler.repository.schedule" />
+            <argument type="service" id="__symfony__.setono_sylius_scheduler.manager.schedule" />
+            <tag name="fob.context_service" />
+        </service>
+
+        <service id="setono_sylius_scheduler.behat.context.setup.job"
+                 class="Tests\Setono\SyliusSchedulerPlugin\Behat\Context\Setup\JobContext">
+            <argument type="service" id="sylius.behat.shared_storage" />
+            <argument type="service" id="__symfony__.doctrine.orm.entity_manager" />
+            <tag name="fob.context_service" />
+        </service>
+
+    </services>
+</container>

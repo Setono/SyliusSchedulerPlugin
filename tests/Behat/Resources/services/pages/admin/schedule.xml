@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="setono_sylius_scheduler.behat.page.admin.schedule.create.class">Tests\Setono\SyliusSchedulerPlugin\Behat\Page\Admin\Schedule\CreatePage</parameter>
+        <parameter key="setono_sylius_scheduler.behat.page.admin.schedule.update.class">Tests\Setono\SyliusSchedulerPlugin\Behat\Page\Admin\Schedule\UpdatePage</parameter>
+        <parameter key="setono_sylius_scheduler.behat.page.admin.schedule.index.class">Tests\Setono\SyliusSchedulerPlugin\Behat\Page\Admin\Schedule\IndexPage</parameter>
+    </parameters>
+
+    <services>
+        <defaults public="true" />
+
+        <service id="setono_sylius_scheduler.behat.page.admin.schedule.create"
+                 class="%setono_sylius_scheduler.behat.page.admin.schedule.create.class%"
+                 parent="sylius.behat.page.admin.crud.create"
+                 public="false">
+            <argument type="string">setono_sylius_scheduler_admin_schedule_create</argument>
+        </service>
+
+        <service id="setono_sylius_scheduler.behat.page.admin.schedule.update"
+                 class="%setono_sylius_scheduler.behat.page.admin.schedule.update.class%"
+                 parent="sylius.behat.page.admin.crud.update"
+                 public="false">
+            <argument type="string">setono_sylius_scheduler_admin_schedule_update</argument>
+        </service>
+
+        <service id="setono_sylius_scheduler.behat.page.admin.schedule.index"
+                 class="%setono_sylius_scheduler.behat.page.admin.schedule.index.class%"
+                 parent="sylius.behat.page.admin.crud.index"
+                 public="false">
+            <argument type="string">setono_sylius_scheduler_admin_schedule_index</argument>
+        </service>
+
+    </services>
+</container>

@@ -1,0 +1,26 @@
+default:
+    suites:
+        setono_sylius_scheduler_cli:
+            contexts_services:
+                - sylius.behat.context.hook.doctrine_orm
+                - sylius.behat.context.hook.email_spool
+
+                - sylius.behat.context.transform.lexical
+                - sylius.behat.context.transform.shared_storage
+                - sylius.behat.context.transform.channel
+                - sylius.behat.context.transform.customer
+                - sylius.behat.context.transform.order
+                - sylius.behat.context.transform.product
+                - sylius.behat.context.transform.taxon
+
+                - sylius.behat.context.setup.channel
+                - sylius.behat.context.setup.currency
+                - sylius.behat.context.setup.product
+                - sylius.behat.context.setup.order
+                - setono_sylius_scheduler.behat.context.setup.order
+                - setono_sylius_scheduler.behat.context.setup.customer
+
+                - setono_sylius_scheduler.behat.context.cli.commands
+
+            filters:
+                tags: "@setono_sylius_scheduler && @cli"
