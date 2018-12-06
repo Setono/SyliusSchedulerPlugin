@@ -11,6 +11,7 @@
         <import resource="services/fixtures.xml"/>
         <import resource="services/form_types.xml"/>
         <import resource="services/twig_extensions.xml"/>
+        <import resource="services/validators.xml"/>
     </imports>
 
     <services>

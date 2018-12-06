@@ -1,0 +1,4 @@
+setono_sylius_scheduler:
+    schedule:
+        cron_expression:
+            valid: Cron expression should be valid.
